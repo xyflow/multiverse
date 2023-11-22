@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   ReactFlow,
   applyNodeChanges,
@@ -11,37 +11,81 @@ import {
   Panel,
   MiniMap,
   Background,
+  type NodeProps,
+  type EdgeProps,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
+
+import css from "./multiverse.module.css";
+import Toggles from "./Toggles";
 
 type FlowProps = {
   flowConfig: ReactFlowConfig;
   clean?: Boolean;
 };
 
-function wrapNode(component) {
-  return (props) => <component {...props} />;
-}
+type wrapNode = (
+  Component: React.ComponentType<NodeProps>
+) => React.ComponentType<NodeProps>;
 
-function wrapEdge(component) {
-  return (props) => <component {...props} />;
-}
+const wrapNode: wrapNode = (Component) => (props) => {
+  // Not really sure about the double div wrapper 💩
+  return (
+    <div className={css.nodeHover}>
+      <div style={{ pointerEvents: "none" }}>
+        <Component {...props} />
+      </div>
+    </div>
+  );
+};
+
+type wrapEdge = (
+  Component: React.ComponentType<EdgeProps>
+) => React.ComponentType<EdgeProps>;
+
+const wrapEdge: wrapEdge = (Component) => (props) => {
+  // Not really sure about the double div wrapper 💩
+  return (
+    <>
+      <Component {...props} />
+    </>
+  );
+};
 
 export default ({ flowConfig, clean }: FlowProps) => {
-  // console.log(flowConfig);
-  const wrappedNodes = flowConfig.flowProps?.nodes?.map(wrapNode);
   const [nodes, setNodes] = useState(flowConfig.flowProps?.nodes);
   const [edges, setEdges] = useState(flowConfig.flowProps?.edges);
 
-  console.log(clean);
+  const [inspecting, setInspecting] = useState(false);
 
-  // const nodeTypes = {};
-  // Object.entries(flowConfig.flowProps?.nodeTypes).forEach(([key, value]) => {
-  //   nodeTypes[key] = wrapNode(value);
-  // });
+  const wrappedNodeTypes = useMemo(
+    () =>
+      Object.entries<React.ComponentType<NodeProps>>(
+        flowConfig.flowProps?.nodeTypes
+      ).reduce(
+        (acc: Record<string, React.ComponentType<NodeProps>>, [key, value]) => {
+          acc[key] = wrapNode(value);
+          return acc;
+        },
+        {}
+      ),
+    []
+  );
 
-  console.log(flowConfig.flowProps);
+  const wrappedEdgeTypes = useMemo(
+    () =>
+      Object.entries<React.ComponentType<EdgeProps>>(
+        flowConfig.flowProps?.edgeTypes
+      ).reduce(
+        (acc: Record<string, React.ComponentType<EdgeProps>>, [key, value]) => {
+          acc[key] = wrapEdge(value);
+          return acc;
+        },
+        {}
+      ),
+    []
+  );
 
   const props = { ...flowConfig.flowProps, nodes, edges };
 
@@ -62,15 +106,29 @@ export default ({ flowConfig, clean }: FlowProps) => {
     <div style={{ height: "100%" }}>
       <ReactFlow
         {...props}
-        onNodesChange={onNodesChange}
+        onNodesChange={inspecting ? () => {} : onNodesChange}
+        // panOnDrag={false}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        nodeTypes={
+          clean || !inspecting
+            ? flowConfig.flowProps?.nodeTypes
+            : wrappedNodeTypes
+        }
+        edgeTypes={
+          clean || !inspecting
+            ? flowConfig.flowProps?.edgeTypes
+            : wrappedEdgeTypes
+        }
       >
         {flowConfig.controlsProps && <Controls {...flowConfig.controlsProps} />}
         {flowConfig.panelProps && <Panel {...flowConfig.panelProps} />}
         {flowConfig.minimapProps && <MiniMap {...flowConfig.minimapProps} />}
         {flowConfig.backgroundProps && (
           <Background {...flowConfig.backgroundProps} />
+        )}
+        {!clean && (
+          <Toggles inspecting={inspecting} setInspecting={setInspecting} />
         )}
       </ReactFlow>
     </div>

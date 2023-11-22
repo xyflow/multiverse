@@ -7,12 +7,15 @@ import { parseFilesToSampleRoutes } from "@utils/paths";
 import Flow from "@packs/music";
 
 export async function getStaticPaths() {
-    // This need to be set manually as well ------------👇
-    const files = import.meta.glob(['../../../../packs/music/**/**/*', '!**/*.react.ts', '!**/*.svelte.ts'], { eager: true, as: 'raw'} );
-    return parseFilesToSampleRoutes(files);
+  const files = import.meta.glob(
+    // And here -------- 👇
+    ["../../../../packs/music/**/**/*", "!**/*.react.ts", "!**/*.svelte.ts"],
+    { eager: true, as: "raw" }
+  );
+  return parseFilesToSampleRoutes(files);
 }
 ---
 
 <Multiverse>
-    <Flow client:load />
+  <Flow client:load />
 </Multiverse>
