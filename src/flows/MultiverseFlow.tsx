@@ -17,11 +17,32 @@ import "reactflow/dist/style.css";
 
 type FlowProps = {
   flowConfig: ReactFlowConfig;
+  clean?: Boolean;
 };
 
-export default ({ flowConfig }: FlowProps) => {
+function wrapNode(component) {
+  return (props) => <component {...props} />;
+}
+
+function wrapEdge(component) {
+  return (props) => <component {...props} />;
+}
+
+export default ({ flowConfig, clean }: FlowProps) => {
+  // console.log(flowConfig);
+  const wrappedNodes = flowConfig.flowProps?.nodes?.map(wrapNode);
   const [nodes, setNodes] = useState(flowConfig.flowProps?.nodes);
   const [edges, setEdges] = useState(flowConfig.flowProps?.edges);
+
+  console.log(clean);
+
+  // const nodeTypes = {};
+  // Object.entries(flowConfig.flowProps?.nodeTypes).forEach(([key, value]) => {
+  //   nodeTypes[key] = wrapNode(value);
+  // });
+
+  console.log(flowConfig.flowProps);
+
   const props = { ...flowConfig.flowProps, nodes, edges };
 
   const onNodesChange: OnNodesChange = useCallback(

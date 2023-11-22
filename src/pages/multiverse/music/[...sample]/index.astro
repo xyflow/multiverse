@@ -1,0 +1,18 @@
+---
+import Multiverse from "@layouts/multiverse.astro";
+// import MultiverseFlow from "@flows/MultiverseFlow";
+import { parseFilesToSampleRoutes } from "@utils/paths";
+
+// Adjust the import here 👇
+import Flow from "@packs/music";
+
+export async function getStaticPaths() {
+    // This need to be set manually as well ------------👇
+    const files = import.meta.glob(['../../../../packs/music/**/**/*', '!**/*.react.ts', '!**/*.svelte.ts'], { eager: true, as: 'raw'} );
+    return parseFilesToSampleRoutes(files);
+}
+---
+
+<Multiverse>
+    <Flow client:load />
+</Multiverse>

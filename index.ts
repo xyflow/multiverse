@@ -37,6 +37,10 @@ export async function getStaticPaths() {
 }
 ---
 
+<script>
+    const files = import.meta.glob(['../../../../packs/**/*', '!**/*.svelte', '!**/.ts'], { eager: true, import: 'default'} );
+</script>
+
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />

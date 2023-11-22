@@ -1,59 +1,46 @@
 ---
-import type { GetStaticPaths } from "astro";
-import ReactFlow from "@flows/ReactFlow";
-import SvelteFlow from "@flows/SvelteFlow.svelte";
+import { parseFilesToRoutes } from "@utils/paths";
+
+import ReactMusicFlow from "@packs/music/index";
+import SvelteMusicFlow from "@packs/music/index.svelte";
 
 export async function getStaticPaths() {
-    const parseFilesToRoutes = (files: Record<string, any>) => {
-        const routes : ReturnType<GetStaticPaths> = [];
-
-        for (const [key, value] of Object.entries(files)) {
-            const cleanedKey = key.replace('../../../packs/', '');
-            const [pack, flow] = cleanedKey.split('/');
-
-            const framework = flow.split('.')[1];
-            const flowConfig = files[`../../../packs/${pack}/flow.${framework}.ts`];
-
-            routes.push({
-                params: {
-                    framework,
-                    pack,
-                },
-                props: {
-                    flowConfig
-                },
-            })
-        }
-        return routes;
-    }
-
-    const files = import.meta.glob('../../../packs/*/*', { eager: true, import: 'default'} );
-    return parseFilesToRoutes(files);
+  const files = import.meta.glob("../../../packs/*/*", {
+    eager: true,
+    import: "default",
+  });
+  return parseFilesToRoutes(files);
 }
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<style>
-			html,
-			body {
-				font-family: system-ui;
-				margin: 0;
-                width: 100%;
-                height: 100%;
-			}
-		</style>
-	</head>
-	<body>
-            {Astro.params.framework === 'react' &&
-                <ReactFlow flowConfig={Astro.props.flowConfig as ReactFlowConfig} client:load/>
-            }
-            {Astro.params.framework === 'svelte' &&
-                <SvelteFlow flowConfig={Astro.props.flowConfig as SvelteFlowConfig} client:load />
-            }
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      html,
+      body {
+        font-family: system-ui;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    {
+      Astro.params.pack === "music" && (
+        <>
+          {Astro.params.framework === "react" && (
+            <ReactMusicFlow client:load clean />
+          )}
+          {Astro.params.framework === "svelte" && (
+            <SvelteMusicFlow client:load />
+          )}
+        </>
+      )
+    }
+  </body>
 </html>
