@@ -6,7 +6,7 @@ import {
   getBezierPath,
 } from "reactflow";
 
-import "./buttonedge.css";
+import "./style.css";
 
 const onEdgeClick = (evt, id) => {
   evt.stopPropagation();

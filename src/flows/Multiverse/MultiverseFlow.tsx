@@ -17,7 +17,8 @@ import {
 
 import "reactflow/dist/style.css";
 
-import css from "./multiverse.module.css";
+import wrapNode from "./wrapNode";
+import wrapEdge from "./wrapEdge";
 import Toggles from "./Toggles";
 
 type FlowProps = {
@@ -25,35 +26,7 @@ type FlowProps = {
   clean?: Boolean;
 };
 
-type wrapNode = (
-  Component: React.ComponentType<NodeProps>
-) => React.ComponentType<NodeProps>;
-
-const wrapNode: wrapNode = (Component) => (props) => {
-  // Not really sure about the double div wrapper 💩
-  return (
-    <div className={css.nodeHover}>
-      <div style={{ pointerEvents: "none" }}>
-        <Component {...props} />
-      </div>
-    </div>
-  );
-};
-
-type wrapEdge = (
-  Component: React.ComponentType<EdgeProps>
-) => React.ComponentType<EdgeProps>;
-
-const wrapEdge: wrapEdge = (Component) => (props) => {
-  // Not really sure about the double div wrapper 💩
-  return (
-    <>
-      <Component {...props} />
-    </>
-  );
-};
-
-export default ({ flowConfig, clean }: FlowProps) => {
+export default ({ flowConfig }: FlowProps) => {
   const [nodes, setNodes] = useState(flowConfig.flowProps?.nodes);
   const [edges, setEdges] = useState(flowConfig.flowProps?.edges);
 
@@ -108,17 +81,13 @@ export default ({ flowConfig, clean }: FlowProps) => {
         {...props}
         onNodesChange={inspecting ? () => {} : onNodesChange}
         // panOnDrag={false}
-        onEdgesChange={onEdgesChange}
+        onEdgesChange={inspecting ? () => {} : onEdgesChange}
         onConnect={onConnect}
         nodeTypes={
-          clean || !inspecting
-            ? flowConfig.flowProps?.nodeTypes
-            : wrappedNodeTypes
+          !inspecting ? flowConfig.flowProps?.nodeTypes : wrappedNodeTypes
         }
         edgeTypes={
-          clean || !inspecting
-            ? flowConfig.flowProps?.edgeTypes
-            : wrappedEdgeTypes
+          !inspecting ? flowConfig.flowProps?.edgeTypes : wrappedEdgeTypes
         }
       >
         {flowConfig.controlsProps && <Controls {...flowConfig.controlsProps} />}
@@ -127,9 +96,8 @@ export default ({ flowConfig, clean }: FlowProps) => {
         {flowConfig.backgroundProps && (
           <Background {...flowConfig.backgroundProps} />
         )}
-        {!clean && (
-          <Toggles inspecting={inspecting} setInspecting={setInspecting} />
-        )}
+
+        <Toggles inspecting={inspecting} setInspecting={setInspecting} />
       </ReactFlow>
     </div>
   );

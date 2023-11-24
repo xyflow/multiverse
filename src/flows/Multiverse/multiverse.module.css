@@ -14,4 +14,18 @@
   padding: 15px;
   transform: translate(-15px, -15px);
   outline: dashed 1px rgba(107, 188, 248, 1);
+  pointer-events: none;
+}
+
+.pathGroup {
+  pointer-events: bounding-box;
+}
+
+.edgeHover {
+  cursor: pointer;
+  position: absolute;
+  background: rgba(107, 188, 248, 0.21);
+  outline: dashed 1px rgba(107, 188, 248, 1);
+  pointer-events: all;
+  z-index: 100;
 }

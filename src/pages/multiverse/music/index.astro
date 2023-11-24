@@ -1,10 +1,10 @@
 ---
 import Multiverse from "@layouts/multiverse.astro";
-// import MultiverseFlow from "@flows/MultiverseFlow";
+
 import { parseFilesToSampleRoutes } from "@utils/paths";
 
-// Adjust the import here 👇
-import Flow from "@packs/music";
+// Adjust the import here --------- 👇
+import { MultiverseFlow } from "@packs/music";
 
 export async function getStaticPaths() {
   const files = import.meta.glob(
@@ -17,5 +17,5 @@ export async function getStaticPaths() {
 ---
 
 <Multiverse>
-  <Flow client:load />
+  <MultiverseFlow client:load />
 </Multiverse>

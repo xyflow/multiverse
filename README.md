@@ -1,13 +1,9 @@
-# Astro + React Example
+# Multiverse
 
-```sh
-npm create astro@latest -- --template framework-react
-```
+## Next steps
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/framework-react)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/framework-react)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/framework-react/devcontainer.json)
-
-This example showcases Astro working with [React](https://react.dev).
-
-Write your React components as `.jsx` or `.tsx` files in your project.
+- [x] Replace Astro routing in client side React
+- [x] Find an elegant solution to highlight edges
+- [ ] View code
+- [ ] Transition back and forth
+- [ ] Correctly view when navigating

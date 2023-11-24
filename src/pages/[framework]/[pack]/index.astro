@@ -1,8 +1,8 @@
 ---
 import { parseFilesToRoutes } from "@utils/paths";
 
-import ReactMusicFlow from "@packs/music/index";
-import SvelteMusicFlow from "@packs/music/index.svelte";
+import MusicPackReact from "@packs/music/index";
+import MusicPackSvelte from "@packs/music/index.svelte";
 
 export async function getStaticPaths() {
   const files = import.meta.glob("../../../packs/*/*", {
@@ -33,11 +33,9 @@ export async function getStaticPaths() {
     {
       Astro.params.pack === "music" && (
         <>
-          {Astro.params.framework === "react" && (
-            <ReactMusicFlow client:load clean />
-          )}
+          {Astro.params.framework === "react" && <MusicPackReact client:load />}
           {Astro.params.framework === "svelte" && (
-            <SvelteMusicFlow client:load />
+            <MusicPackSvelte client:load />
           )}
         </>
       )
