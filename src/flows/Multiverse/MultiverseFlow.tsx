@@ -30,7 +30,7 @@ export default ({ flowConfig }: FlowProps) => {
   const [nodes, setNodes] = useState(flowConfig.flowProps?.nodes);
   const [edges, setEdges] = useState(flowConfig.flowProps?.edges);
 
-  const [inspecting, setInspecting] = useState(false);
+  const [inspecting, setInspecting] = useState(true);
 
   const wrappedNodeTypes = useMemo(
     () =>
@@ -63,15 +63,15 @@ export default ({ flowConfig }: FlowProps) => {
   const props = { ...flowConfig.flowProps, nodes, edges };
 
   const onNodesChange: OnNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    (changes) => setNodes((nds) => applyNodeChanges(changes, nds!)),
     []
   );
   const onEdgesChange: OnEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds!)),
     []
   );
   const onConnect: OnConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params) => setEdges((eds) => addEdge(params, eds!)),
     []
   );
 
