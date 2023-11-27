@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
   ReactFlow,
   applyNodeChanges,
@@ -13,6 +13,7 @@ import {
   Background,
   type NodeProps,
   type EdgeProps,
+  useReactFlow,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -23,14 +24,28 @@ import Toggles from "./Toggles";
 
 type FlowProps = {
   flowConfig: ReactFlowConfig;
-  clean?: Boolean;
+  onNodeClick: (nodeType: string, nodeId: string) => void;
+  onEdgeClick: (edgeType: string, edgeId: string) => void;
+  focus: { node?: string; edge?: string };
 };
 
-export default ({ flowConfig }: FlowProps) => {
+export default ({ flowConfig, onNodeClick, onEdgeClick, focus }: FlowProps) => {
   const [nodes, setNodes] = useState(flowConfig.flowProps?.nodes);
   const [edges, setEdges] = useState(flowConfig.flowProps?.edges);
-
   const [inspecting, setInspecting] = useState(true);
+
+  const viewport = useReactFlow();
+  useEffect(() => {
+    if (focus.node && focus.edge) {
+      // Don't support focusing multiple nodes & edges
+      return;
+    }
+
+    if (focus.node) {
+      // viewport.fitView({ nodes: [{ id: focus.node }], duration: 150 });
+      viewport.setViewport({ x: 0, y: 0, zoom: 1 }, { duration: 350 });
+    }
+  }, [focus]);
 
   const wrappedNodeTypes = useMemo(
     () =>
@@ -38,7 +53,7 @@ export default ({ flowConfig }: FlowProps) => {
         flowConfig.flowProps?.nodeTypes
       ).reduce(
         (acc: Record<string, React.ComponentType<NodeProps>>, [key, value]) => {
-          acc[key] = wrapNode(value);
+          acc[key] = wrapNode(value, onNodeClick);
           return acc;
         },
         {}
@@ -52,7 +67,7 @@ export default ({ flowConfig }: FlowProps) => {
         flowConfig.flowProps?.edgeTypes
       ).reduce(
         (acc: Record<string, React.ComponentType<EdgeProps>>, [key, value]) => {
-          acc[key] = wrapEdge(value);
+          acc[key] = wrapEdge(value, onEdgeClick);
           return acc;
         },
         {}
@@ -76,29 +91,27 @@ export default ({ flowConfig }: FlowProps) => {
   );
 
   return (
-    <div style={{ height: "100%" }}>
-      <ReactFlow
-        {...props}
-        onNodesChange={inspecting ? () => {} : onNodesChange}
-        // panOnDrag={false}
-        onEdgesChange={inspecting ? () => {} : onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={
-          !inspecting ? flowConfig.flowProps?.nodeTypes : wrappedNodeTypes
-        }
-        edgeTypes={
-          !inspecting ? flowConfig.flowProps?.edgeTypes : wrappedEdgeTypes
-        }
-      >
-        {flowConfig.controlsProps && <Controls {...flowConfig.controlsProps} />}
-        {flowConfig.panelProps && <Panel {...flowConfig.panelProps} />}
-        {flowConfig.minimapProps && <MiniMap {...flowConfig.minimapProps} />}
-        {flowConfig.backgroundProps && (
-          <Background {...flowConfig.backgroundProps} />
-        )}
+    <ReactFlow
+      {...props}
+      onNodesChange={inspecting ? () => {} : onNodesChange}
+      // panOnDrag={false}
+      onEdgesChange={inspecting ? () => {} : onEdgesChange}
+      onConnect={onConnect}
+      nodeTypes={
+        !inspecting ? flowConfig.flowProps?.nodeTypes : wrappedNodeTypes
+      }
+      edgeTypes={
+        !inspecting ? flowConfig.flowProps?.edgeTypes : wrappedEdgeTypes
+      }
+    >
+      {flowConfig.controlsProps && <Controls {...flowConfig.controlsProps} />}
+      {flowConfig.panelProps && <Panel {...flowConfig.panelProps} />}
+      {flowConfig.minimapProps && <MiniMap {...flowConfig.minimapProps} />}
+      {flowConfig.backgroundProps && (
+        <Background {...flowConfig.backgroundProps} />
+      )}
 
-        <Toggles inspecting={inspecting} setInspecting={setInspecting} />
-      </ReactFlow>
-    </div>
+      <Toggles inspecting={inspecting} setInspecting={setInspecting} />
+    </ReactFlow>
   );
 };

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import {
+  useStore,
   useReactFlow,
   type EdgeProps,
   type ReactFlowInstance,
@@ -9,11 +10,7 @@ import {
 
 import css from "./multiverse.module.css";
 
-const PADDING = 10;
-
-type wrapEdge = (
-  Component: React.ComponentType<EdgeProps>
-) => React.ComponentType<EdgeProps>;
+const PADDING = 20;
 
 function getPathBB(path: SVGElement, reactFlowInstance: ReactFlowInstance) {
   const pathBBox = path.getBoundingClientRect();
@@ -33,8 +30,14 @@ function getPathBB(path: SVGElement, reactFlowInstance: ReactFlowInstance) {
   };
 }
 
-const wrapEdge: wrapEdge = (Component) => (props) => {
+type wrapEdge = (
+  Component: React.ComponentType<EdgeProps>,
+  onEdgeClick: (edge: string, edgeId: string) => void,
+) => React.ComponentType<EdgeProps>;
+
+const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
   const reactFlowInstance = useReactFlow();
+  const reactFlowDomNode = useStore((state) => state.domNode);
 
   const group = useRef<SVGGElement>(null);
 
@@ -82,7 +85,12 @@ const wrapEdge: wrapEdge = (Component) => (props) => {
       <Component {...props} />
       <HoverCard.Root open={hover}>
         <EdgeLabelRenderer>
-          <HoverCard.Content side="top" sideOffset={5} style={{ zIndex: 10 }}>
+          <HoverCard.Content
+            side="top"
+            sideOffset={5}
+            style={{ zIndex: 10 }}
+            collisionBoundary={reactFlowDomNode}
+          >
             <div className={css.tooltip}>
               <span className={css.tooltipTitle}>Edge Type Missing</span>
             </div>
@@ -93,8 +101,7 @@ const wrapEdge: wrapEdge = (Component) => (props) => {
           <HoverCard.Trigger asChild>
             <div
               onClick={() => {
-                // FIXME: This routing is just temporary (switch to next router later)
-                history.pushState({}, "", `${window.location}/edgetypemissing`);
+                onEdgeClick("edgetypemissing", props.id);
               }}
               onMouseLeave={() => {
                 setHover(false);

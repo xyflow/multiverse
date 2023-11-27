@@ -1,18 +1,24 @@
-import { EdgeLabelRenderer, type NodeProps } from "reactflow";
+import { EdgeLabelRenderer, useStore, type NodeProps } from "reactflow";
 import * as HoverCard from "@radix-ui/react-hover-card";
 
 import css from "./multiverse.module.css";
 
 type wrapNode = (
-  Component: React.ComponentType<NodeProps>
+  Component: React.ComponentType<NodeProps>,
+  onNodeClick: (node: string, nodeId: string) => void,
 ) => React.ComponentType<NodeProps>;
 
-const wrapNode: wrapNode = (Component) => (props) => {
+const wrapNode: wrapNode = (Component, onNodeClick) => (props) => {
+  const reactFlowDomNode = useStore((state) => state.domNode);
   // FIXME: Not really sure about the double div wrapper to prevent user interaction 💩
   return (
     <HoverCard.Root openDelay={0} closeDelay={0}>
       <EdgeLabelRenderer>
-        <HoverCard.Content side="top" sideOffset={20}>
+        <HoverCard.Content
+          side="top"
+          sideOffset={20}
+          collisionBoundary={reactFlowDomNode}
+        >
           <div className={css.tooltip}>
             <span className={css.tooltipTitle}>{props.type}</span>
           </div>
@@ -23,12 +29,7 @@ const wrapNode: wrapNode = (Component) => (props) => {
         <div
           className={css.nodeHighlightBox}
           onClick={() => {
-            // FIXME: This routing is just temporary (switch to next router later)
-            history.pushState(
-              {},
-              "",
-              `${window.location}/${props.type.toLowerCase()}`
-            );
+            onNodeClick(props.type, props.id);
           }}
         >
           <div style={{ pointerEvents: "all" }}>

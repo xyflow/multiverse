@@ -1,21 +1,33 @@
 ---
-import Multiverse from "@layouts/multiverse.astro";
+import MultiverseLayout from "@layouts/multiverse.astro";
 
-import { parseFilesToSampleRoutes } from "@utils/paths";
+import { parseFilesToSamples } from "@utils/paths";
 
-// Adjust the import here --------- 👇
+// Adjust the import here ------------- 👇
 import { MultiverseFlow } from "@packs/music";
 
-export async function getStaticPaths() {
-  const files = import.meta.glob(
-    // And here -------- 👇
-    ["../../../../packs/music/**/**/*", "!**/*.react.ts", "!**/*.svelte.ts"],
-    { eager: true, as: "raw" }
-  );
-  return parseFilesToSampleRoutes(files);
-}
+const files = import.meta.glob(
+  // And here ------- 👇
+  [
+    "../../../packs/music/**/**/*",
+    "!**/*.react.ts",
+    "!**/*.svelte.ts",
+    "!**/index.tsx",
+  ],
+  { eager: true, as: "raw" }
+);
+const samples = parseFilesToSamples(files);
+
+// export async function getStaticPaths() {
+//   const files = import.meta.glob(
+//     // And here -------- 👇
+//     ["../../../../packs/music/**/**/*", "!**/*.react.ts", "!**/*.svelte.ts"],
+//     { eager: true, as: "raw" }
+//   );
+//   return parseFilesToSampleRoutes(files);
+// }
 ---
 
-<Multiverse>
-  <MultiverseFlow client:load />
-</Multiverse>
+<MultiverseLayout>
+  <MultiverseFlow samples={samples} client:load />
+</MultiverseLayout>

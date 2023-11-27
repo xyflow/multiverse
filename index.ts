@@ -1,6 +1,6 @@
 ---
 import type { GetStaticPaths } from "astro";
-import MultiverseFlow from "@flows/Multiverse/MultiverseFlow";
+import MultiverseFlow from "@flows/Multiverse";
 
 export async function getStaticPaths() {
     const parseFilesToRoutes = (files: Record<string, any>) => {

@@ -1,27 +1,40 @@
 import ReactFlow from "@flows/ReactFlow.tsx";
-import Multiverse from "@flows/Multiverse/MultiverseFlow.tsx";
+import Multiverse from "@flows/Multiverse";
 
 import Oscilloscope from "./oscilloscope/Oscilloscope.tsx";
 import ButtonEdge from "./buttonedge/ButtonEdge.tsx";
+import type { Sample } from "@utils/paths.ts";
 
 export const flowConfig: ReactFlowConfig = {
   flowProps: {
     nodes: [
       {
         id: "1",
-        data: { label: "Node 1", sampleName: "oscilloscope" },
+        data: {
+          label: "Node 1",
+          description:
+            "With this node you can display the amplitudes of your signal as a function of time.",
+        },
         position: { x: 250, y: 5 },
         type: "Oscilloscope",
       },
       {
         id: "2",
-        data: { label: "Node 1", sampleName: "oscilloscope" },
+        data: {
+          label: "Node 1",
+          description:
+            "With this node you can display the amplitudes of your signal as a function of time.",
+        },
         position: { x: 400, y: 250 },
         type: "Oscilloscope",
       },
       {
         id: "3",
-        data: { label: "Node 1", sampleName: "oscilloscope" },
+        data: {
+          label: "Node 1",
+          description:
+            "With this node you can display the amplitudes of your signal as a function of time.",
+        },
         position: { x: 600, y: 250 },
         type: "Oscilloscope",
       },
@@ -50,6 +63,10 @@ export default () => <ReactFlow flowConfig={flowConfig} />;
 
 // This boilerplate is not necessary but Astro is weird
 // (no functions allowed in props...)
-export function MultiverseFlow() {
-  return <Multiverse flowConfig={flowConfig} />;
+export function MultiverseFlow({
+  samples,
+}: {
+  samples: Record<string, Sample>;
+}) {
+  return <Multiverse samples={samples} flowConfig={flowConfig} />;
 }

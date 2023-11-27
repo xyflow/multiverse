@@ -1,29 +1,25 @@
 import type { GetStaticPaths } from "astro";
 
-export function parseFilesToSampleRoutes(files: Record<string, any>) {
-  const routes: ReturnType<GetStaticPaths> = [];
+export type Sample = {
+  react: string;
+  svelte?: string;
+};
+
+export function parseFilesToSamples(files: Record<string, any>) {
+  const samples: Record<string, Sample> = {};
 
   for (const [key, value] of Object.entries(files)) {
     if (key.endsWith(".svelte")) continue;
 
-    const cleanedKey = key.replace("../../../../packs/", "");
+    const cleanedKey = key.replace("../../../packs/", "");
     const sample = cleanedKey.split("/")[1];
 
-    routes.push({
-      params: {
-        sample,
-      },
-      props: {
-        react: value,
-        svelte: files[key.replace("tsx", "svelte")],
-      },
-    });
+    samples[sample] = {
+      react: value,
+      svelte: files[key.replace("tsx", "svelte")],
+    };
   }
-
-  // main route: /multiverse/pack
-  routes.push({ params: { sample: undefined } });
-
-  return routes;
+  return samples;
 }
 
 export function parseFilesToRoutes(files: Record<string, string>) {
