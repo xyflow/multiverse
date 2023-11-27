@@ -11,7 +11,7 @@ export function parseFilesToSamples(files: Record<string, any>) {
   for (const [key, value] of Object.entries(files)) {
     if (key.endsWith(".svelte")) continue;
 
-    const cleanedKey = key.replace("../../../packs/", "");
+    const cleanedKey = key.replace("../../../../packs/", "");
     const sample = cleanedKey.split("/")[1];
 
     samples[sample] = {

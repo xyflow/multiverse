@@ -65,8 +65,17 @@ export default () => <ReactFlow flowConfig={flowConfig} />;
 // (no functions allowed in props...)
 export function MultiverseFlow({
   samples,
+  initialLocation,
 }: {
   samples: Record<string, Sample>;
+  initialLocation: string;
 }) {
-  return <Multiverse samples={samples} flowConfig={flowConfig} />;
+  return (
+    <Multiverse
+      samples={samples}
+      flowConfig={flowConfig}
+      initialLocation={initialLocation}
+      pack="music"
+    />
+  );
 }

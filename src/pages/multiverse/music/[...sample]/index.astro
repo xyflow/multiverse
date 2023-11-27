@@ -1,0 +1,65 @@
+---
+import MultiverseLayout from "@layouts/multiverse.astro";
+
+import { parseFilesToSamples } from "@utils/paths";
+
+// Adjust the import here ------------- 👇
+import { MultiverseFlow } from "@packs/music";
+import type { GetStaticPaths } from "astro";
+
+const files = import.meta.glob(
+  // And here ------- 👇
+  [
+    "../../../../packs/music/**/**/*",
+    "!**/*.react.ts",
+    "!**/*.svelte.ts",
+    "!**/index.tsx",
+  ],
+  { eager: true, as: "raw" },
+);
+const samples = parseFilesToSamples(files);
+
+export async function getStaticPaths() {
+  const files = import.meta.glob(
+    // And here ------- 👇
+    [
+      "../../../../packs/music/**/**/*",
+      "!**/*.react.ts",
+      "!**/*.svelte.ts",
+      "!**/index.tsx",
+    ],
+    { eager: true, as: "raw" },
+  );
+  const samples = parseFilesToSamples(files);
+  const routes: ReturnType<GetStaticPaths> = [];
+  Object.keys(samples).forEach((sample) => {
+    routes.push({
+      params: {
+        sample,
+      },
+    });
+  });
+
+  routes.push({
+    params: {
+      sample: undefined,
+    },
+  });
+
+  return routes;
+  // const files = import.meta.glob(
+  //   // And here -------- 👇
+  //   ["../../../../packs/music/**/**/*", "!**/*.react.ts", "!**/*.svelte.ts"],
+  //   { eager: true, as: "raw" }
+  // );
+  // return parseFilesToSampleRoutes(files);
+}
+---
+
+<MultiverseLayout>
+  <MultiverseFlow
+    samples={samples}
+    initialLocation={(Astro.params.sample as string) ?? "home"}
+    client:load
+  />
+</MultiverseLayout>

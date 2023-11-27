@@ -88,7 +88,8 @@ const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
           <HoverCard.Content
             side="top"
             sideOffset={5}
-            style={{ zIndex: 10 }}
+            // z-index needs to be higher than 1000 to be above selected nodes
+            style={{ zIndex: 1001 }}
             collisionBoundary={reactFlowDomNode}
           >
             <div className={css.tooltip}>
