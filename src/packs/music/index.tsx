@@ -15,7 +15,7 @@ export const flowConfig: ReactFlowConfig = {
           description:
             "With this node you can display the amplitudes of your signal as a function of time.",
         },
-        position: { x: 250, y: 5 },
+        position: { x: 250, y: 0 },
         type: "Oscilloscope",
       },
       {

@@ -23,17 +23,39 @@ import wrapEdge from "./wrapEdge";
 import Toggles from "./Toggles";
 
 const DURATION = 350;
+const FOCUS_PADDING = 50;
+
+function calculateZoom(
+  width: number,
+  height: number,
+  containerWidth: number,
+  containerHeight: number,
+  padding: number,
+) {
+  const widthZoom = containerWidth / (width + padding);
+  const heightZoom = containerHeight / (height + padding);
+  return Math.min(widthZoom, heightZoom);
+}
 
 type FlowProps = {
   flowConfig: ReactFlowConfig;
   onNodeClick: (nodeType: string, nodeId: string) => void;
   onEdgeClick: (edgeType: string, edgeId: string) => void;
   focus: { node?: string; edge?: string };
+  focusedFlowSize: { width: number; height: number };
+  skipAnimation: boolean;
 };
 
-export default ({ flowConfig, onNodeClick, onEdgeClick, focus }: FlowProps) => {
-  const [nodes, setNodes] = useState(flowConfig.flowProps?.nodes);
-  const [edges, setEdges] = useState(flowConfig.flowProps?.edges);
+export default ({
+  flowConfig,
+  onNodeClick,
+  onEdgeClick,
+  focus,
+  focusedFlowSize,
+  skipAnimation,
+}: FlowProps) => {
+  const [nodes, setNodes] = useState(flowConfig.flowProps?.nodes!);
+  const [edges, setEdges] = useState(flowConfig.flowProps?.edges!);
   const [inspecting, setInspecting] = useState(true);
 
   const viewport = useReactFlow();
@@ -54,14 +76,32 @@ export default ({ flowConfig, onNodeClick, onEdgeClick, focus }: FlowProps) => {
       return;
     }
 
+    // TODO: If animation should be skipped, this should be the initial viewport?
+    // Maybe not possible, but then it still should not be visible for a second first
     if (focus.node) {
       // viewport.fitView({ nodes: [{ id: focus.node }], duration: 150 });
-      viewport.setViewport({ x: 0, y: 0, zoom: 1 }, { duration: DURATION });
+      const node = nodes?.find((n) => n.id === focus.node);
+      const zoom = calculateZoom(
+        node.width,
+        node.height,
+        focusedFlowSize.width,
+        focusedFlowSize.height,
+        FOCUS_PADDING,
+      );
+
+      viewport.setViewport(
+        {
+          x: -node.position.x * zoom + focusedFlowSize.width * 0.5,
+          y: -node.position.y * zoom + focusedFlowSize.height * 0.5,
+          zoom: zoom,
+        },
+        { duration: skipAnimation ? 0 : 350 },
+      );
       return;
     }
 
     if (focus.edge) {
-      //viewport.setViewport({ x: 0, y: 0, zoom: 1 }, { duration: 350 });
+      // TODO: Focus on edge
       return;
     }
   }, [focus]);
@@ -112,9 +152,11 @@ export default ({ flowConfig, onNodeClick, onEdgeClick, focus }: FlowProps) => {
   return (
     <ReactFlow
       {...props}
-      onNodesChange={inspecting ? () => {} : onNodesChange}
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
       // panOnDrag={false}
-      onEdgesChange={inspecting ? () => {} : onEdgesChange}
+      onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       nodeTypes={
         !inspecting ? flowConfig.flowProps?.nodeTypes : wrappedNodeTypes
@@ -122,6 +164,7 @@ export default ({ flowConfig, onNodeClick, onEdgeClick, focus }: FlowProps) => {
       edgeTypes={
         !inspecting ? flowConfig.flowProps?.edgeTypes : wrappedEdgeTypes
       }
+      nodeOrigin={[0.5, 0.5]}
     >
       {flowConfig.controlsProps && <Controls {...flowConfig.controlsProps} />}
       {flowConfig.panelProps && <Panel {...flowConfig.panelProps} />}

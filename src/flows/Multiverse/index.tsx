@@ -38,7 +38,6 @@ export default function ({
     } else {
       navigateToSample(event.state?.location);
     }
-    console.log(event.state);
   }
 
   function navigateToSample(sample: string) {
@@ -115,14 +114,20 @@ export default function ({
               onElementClick(edgeType, edgeId, "edge");
             }}
             focus={focus}
+            focusedFlowSize={{
+              /* TODO: This should not be hardcoded but responsive */
+              width: 624,
+              height: 480,
+            }}
+            skipAnimation={skipAnimation}
           />
         </ReactFlowProvider>
         {code && (
           <div className="absolute top-0 box-border flex h-full w-full">
-            <div className="flex h-full w-96 flex-col">
+            <div className="flex h-full w-[39rem] flex-col">
               {/* window for react flow */}
               <div
-                className="h-96"
+                className="h-[30rem]"
                 onClick={() => {
                   backToHome();
                 }}
