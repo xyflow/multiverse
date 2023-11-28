@@ -9,26 +9,9 @@ import {
 } from "reactflow";
 
 import css from "./multiverse.module.css";
+import { getPathBoundingBox } from "./utils";
 
 const PADDING = 20;
-
-function getPathBB(path: SVGElement, reactFlowInstance: ReactFlowInstance) {
-  const pathBBox = path.getBoundingClientRect();
-
-  const zoom = reactFlowInstance.getZoom();
-
-  const flowPosition = reactFlowInstance.screenToFlowPosition({
-    x: pathBBox.x,
-    y: pathBBox.y,
-  });
-
-  return {
-    width: pathBBox.width / zoom,
-    height: pathBBox.height / zoom,
-    x: flowPosition.x,
-    y: flowPosition.y,
-  };
-}
 
 type wrapEdge = (
   Component: React.ComponentType<EdgeProps>,
@@ -54,14 +37,14 @@ const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
       const path = group.current.firstChild as SVGElement;
 
       // set initial path bounding box
-      const newPathBBox = getPathBB(path, reactFlowInstance);
+      const newPathBBox = getPathBoundingBox(path, reactFlowInstance);
       setPathBB(newPathBBox);
 
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           // set new path bounding box when 'd' changes
           if (mutation.attributeName === "d") {
-            const newPathBBox = getPathBB(path, reactFlowInstance);
+            const newPathBBox = getPathBoundingBox(path, reactFlowInstance);
             setPathBB(newPathBBox);
           }
         });
@@ -93,7 +76,8 @@ const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
             collisionBoundary={reactFlowDomNode}
           >
             <div className={css.tooltip}>
-              <span className={css.tooltipTitle}>Edge Type Missing</span>
+              {/* FIXME: type not part of edge props so props.data workaround used */}
+              <span className={css.tooltipTitle}>{props.data.title}</span>
             </div>
             <HoverCard.Arrow className={css.arrow} />
           </HoverCard.Content>
@@ -102,7 +86,7 @@ const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
           <HoverCard.Trigger asChild>
             <div
               onClick={() => {
-                onEdgeClick("edgetypemissing", props.id);
+                onEdgeClick(props.data.title, props.id);
               }}
               onMouseLeave={() => {
                 setHover(false);
@@ -115,9 +99,8 @@ const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
                 visibility: hover ? "visible" : "hidden",
                 width: pathBB.width + PADDING * 2,
                 height: pathBB.height + PADDING * 2,
-                transform: `translate(${pathBB.x - PADDING}px, ${
-                  pathBB.y - PADDING
-                }px)`,
+                transform: `translate(${pathBB.x - PADDING}px, 
+                  ${pathBB.y - PADDING}px)`,
               }}
             />
           </HoverCard.Trigger>

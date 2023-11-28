@@ -1,41 +1,33 @@
 ---
 import MultiverseLayout from "@layouts/multiverse.astro";
 
-import { parseFilesToSamples } from "@utils/paths";
+import { parseFilesToSamples, type Sample } from "@utils/paths";
 
 // Adjust the import here ------------- 👇
 import { MultiverseFlow } from "@packs/music";
 import type { GetStaticPaths } from "astro";
 
-const files = import.meta.glob(
-  // And here ------- 👇
-  [
-    "../../../../packs/music/**/**/*",
-    "!**/*.react.ts",
-    "!**/*.svelte.ts",
-    "!**/index.tsx",
-  ],
-  { eager: true, as: "raw" },
-);
-const samples = parseFilesToSamples(files);
-
 export async function getStaticPaths() {
   const files = import.meta.glob(
     // And here ------- 👇
-    [
-      "../../../../packs/music/**/**/*",
-      "!**/*.react.ts",
-      "!**/*.svelte.ts",
-      "!**/index.tsx",
-    ],
+    ["../../../../packs/music/**/**/*", "!**/index.tsx", "!**/*.css"],
     { eager: true, as: "raw" },
   );
-  const samples = parseFilesToSamples(files);
+
+  const modules = import.meta.glob(
+    // And here ------- 👇
+    ["../../../../packs/music/**/**/*.tsx", "!**/index.tsx"],
+    { eager: true, import: "meta", query: "?inline" },
+  );
+  const samples = parseFilesToSamples(files, modules);
   const routes: ReturnType<GetStaticPaths> = [];
   Object.keys(samples).forEach((sample) => {
     routes.push({
       params: {
         sample,
+      },
+      props: {
+        samples,
       },
     });
   });
@@ -44,21 +36,18 @@ export async function getStaticPaths() {
     params: {
       sample: undefined,
     },
+    props: {
+      samples,
+    },
   });
 
   return routes;
-  // const files = import.meta.glob(
-  //   // And here -------- 👇
-  //   ["../../../../packs/music/**/**/*", "!**/*.react.ts", "!**/*.svelte.ts"],
-  //   { eager: true, as: "raw" }
-  // );
-  // return parseFilesToSampleRoutes(files);
 }
 ---
 
 <MultiverseLayout>
   <MultiverseFlow
-    samples={samples}
+    samples={Astro.props.samples as Record<string, Sample>}
     initialLocation={(Astro.params.sample as string) ?? "home"}
     client:load
   />

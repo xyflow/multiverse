@@ -3,7 +3,6 @@ import Flow from "./flow";
 import { useEffect, useState } from "react";
 import { ReactFlowProvider } from "reactflow";
 
-import css from "./multiverse.module.css";
 import { CodeViewer } from "./CodeViewer";
 
 export default function ({
@@ -17,7 +16,7 @@ export default function ({
   flowConfig: ReactFlowConfig;
   pack: string;
 }) {
-  const [code, setCode] = useState<string>();
+  const [currentSample, setCurentSample] = useState<Sample>();
   const [focus, setFocus] = useState<{ node?: string; edge?: string }>({});
   const [skipAnimation, setSkipAnimation] = useState(
     initialLocation !== "home",
@@ -26,14 +25,14 @@ export default function ({
   function backToHome() {
     setSkipAnimation(false);
     history.pushState({ location: "home" }, "", `/multiverse/${pack}`);
-    setCode(undefined);
+    setCurentSample(undefined);
     setFocus({});
   }
 
   function popState(event: PopStateEvent) {
     if (event.state?.location === "home") {
       setSkipAnimation(false);
-      setCode(undefined);
+      setCurentSample(undefined);
       setFocus({});
     } else {
       navigateToSample(event.state?.location);
@@ -41,10 +40,10 @@ export default function ({
   }
 
   function navigateToSample(sample: string) {
-    const codeSample = samples[sample];
+    const _currentSample = samples[sample];
 
-    if (codeSample) {
-      setCode(codeSample.react);
+    if (_currentSample) {
+      setCurentSample(_currentSample);
 
       const possibleNode = flowConfig.flowProps?.nodes.find(
         (node) => node.type.toLowerCase() === sample,
@@ -85,15 +84,15 @@ export default function ({
   }, []);
 
   function onElementClick(type: string, id: string, kind: string) {
-    const codeSample = samples[type.toLowerCase()];
-    if (codeSample) {
-      // FIXME: This routing is just temporary (switch to next router later)
+    const _currentSample = samples[type.toLowerCase()];
+    if (_currentSample) {
+      // TODO: This routing is just temporary (switch to next router later)
       history.pushState(
         { pack: "music", location: type.toLowerCase() },
         "",
         `${window.location}/${type.toLowerCase()}`,
       );
-      setCode(codeSample.react);
+      setCurentSample(_currentSample);
       setFocus({
         node: kind === "node" ? id : undefined,
         edge: kind === "edge" ? id : undefined,
@@ -122,7 +121,7 @@ export default function ({
             skipAnimation={skipAnimation}
           />
         </ReactFlowProvider>
-        {code && (
+        {currentSample && (
           <div className="absolute top-0 box-border flex h-full w-full">
             <div className="flex h-full w-[39rem] flex-col">
               {/* window for react flow */}
@@ -137,11 +136,10 @@ export default function ({
                   skipAnimation ? "" : "animate-fade-in-delayed"
                 } grow bg-white p-5 transition-opacity`}
               >
-                <h1 className="font-xl text-small text-center">Oscilliscope</h1>
-                <p>
-                  There might be a description here, explaining how to use the
-                  node or whatever.
-                </p>
+                <h1 className="font-xl text-small text-center">
+                  {currentSample.title}
+                </h1>
+                <p>{currentSample.description}</p>
               </div>
             </div>
             <div
@@ -151,7 +149,10 @@ export default function ({
             >
               <div className="m-auto max-w-2xl p-10">
                 <p>Copy this into your project</p>
-                <CodeViewer files={{ "App.js": code }} readOnly />
+                <CodeViewer
+                  files={{ "App.js": currentSample.react }}
+                  readOnly
+                />
               </div>
             </div>
           </div>

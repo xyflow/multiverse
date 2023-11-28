@@ -21,6 +21,7 @@ import "reactflow/dist/style.css";
 import wrapNode from "./wrapNode";
 import wrapEdge from "./wrapEdge";
 import Toggles from "./Toggles";
+import { getPathBoundingBox } from "./utils";
 
 const DURATION = 350;
 const FOCUS_PADDING = 50;
@@ -35,6 +36,12 @@ function calculateZoom(
   const widthZoom = containerWidth / (width + padding);
   const heightZoom = containerHeight / (height + padding);
   return Math.min(widthZoom, heightZoom);
+}
+
+enum FlowInitState {
+  Initial = 0,
+  Rendered,
+  ViewportFocused,
 }
 
 type FlowProps = {
@@ -57,15 +64,24 @@ export default ({
   const [nodes, setNodes] = useState(flowConfig.flowProps?.nodes!);
   const [edges, setEdges] = useState(flowConfig.flowProps?.edges!);
   const [inspecting, setInspecting] = useState(true);
+  const [flowInitState, setFlowInitState] = useState<FlowInitState>(
+    FlowInitState.Initial,
+  );
 
   const viewport = useReactFlow();
 
   useEffect(() => {
-    if (focus.node) {
+    if (flowInitState === FlowInitState.Initial && nodes[0].width) {
+      setFlowInitState(FlowInitState.Rendered);
     }
-  }, []);
+  }, [nodes]);
 
   useEffect(() => {
+    // node & edge positions are not available until the first render
+    if (flowInitState === FlowInitState.Initial) {
+      return;
+    }
+
     if (focus.node && focus.edge) {
       // Don't support focusing multiple nodes & edges
       return;
@@ -76,10 +92,7 @@ export default ({
       return;
     }
 
-    // TODO: If animation should be skipped, this should be the initial viewport?
-    // Maybe not possible, but then it still should not be visible for a second first
     if (focus.node) {
-      // viewport.fitView({ nodes: [{ id: focus.node }], duration: 150 });
       const node = nodes?.find((n) => n.id === focus.node);
       const zoom = calculateZoom(
         node.width,
@@ -97,14 +110,47 @@ export default ({
         },
         { duration: skipAnimation ? 0 : 350 },
       );
+      setFlowInitState(FlowInitState.ViewportFocused);
       return;
     }
 
     if (focus.edge) {
-      // TODO: Focus on edge
+      const svgGroup = document.querySelector<SVGElement>(
+        `[data-testid="rf__edge-${focus.edge}"]`,
+      );
+
+      if (!svgGroup) {
+        return;
+      }
+
+      const edgeBoundingBox = getPathBoundingBox(svgGroup, viewport);
+      console.log(edgeBoundingBox);
+      const zoom = calculateZoom(
+        edgeBoundingBox.width,
+        edgeBoundingBox.height,
+        focusedFlowSize.width,
+        focusedFlowSize.height,
+        FOCUS_PADDING,
+      );
+      // const zoom = 1;
+      viewport.setViewport(
+        {
+          x:
+            -edgeBoundingBox.width -
+            edgeBoundingBox.x * zoom +
+            focusedFlowSize.width * 0.5,
+          y:
+            -edgeBoundingBox.height -
+            edgeBoundingBox.y * zoom +
+            focusedFlowSize.height * 0.5,
+          zoom: zoom,
+        },
+        { duration: skipAnimation ? 0 : 350 },
+      );
+      setFlowInitState(FlowInitState.ViewportFocused);
       return;
     }
-  }, [focus]);
+  }, [focus, flowInitState]);
 
   const wrappedNodeTypes = useMemo(
     () =>
@@ -134,8 +180,6 @@ export default ({
     [],
   );
 
-  const props = { ...flowConfig.flowProps, nodes, edges };
-
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds!)),
     [],
@@ -151,12 +195,21 @@ export default ({
 
   return (
     <ReactFlow
-      {...props}
+      {...flowConfig.flowProps}
       nodes={nodes}
       edges={edges}
-      onNodesChange={onNodesChange}
-      // panOnDrag={false}
-      onEdgesChange={onEdgesChange}
+      onNodesChange={
+        inspecting && flowInitState === FlowInitState.ViewportFocused
+          ? () => {}
+          : onNodesChange
+        /*FIXME is this the way to make it non-interactive? */
+      }
+      onEdgesChange={
+        inspecting && flowInitState === FlowInitState.ViewportFocused
+          ? () => {}
+          : onEdgesChange
+        /*FIXME is this the way to make it non-interactive? */
+      }
       onConnect={onConnect}
       nodeTypes={
         !inspecting ? flowConfig.flowProps?.nodeTypes : wrappedNodeTypes
@@ -165,6 +218,12 @@ export default ({
         !inspecting ? flowConfig.flowProps?.edgeTypes : wrappedEdgeTypes
       }
       nodeOrigin={[0.5, 0.5]}
+      style={{
+        opacity:
+          flowInitState !== FlowInitState.ViewportFocused && skipAnimation
+            ? 0
+            : 1,
+      }}
     >
       {flowConfig.controlsProps && <Controls {...flowConfig.controlsProps} />}
       {flowConfig.panelProps && <Panel {...flowConfig.panelProps} />}

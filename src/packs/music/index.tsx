@@ -45,6 +45,10 @@ export const flowConfig: ReactFlowConfig = {
         source: "1",
         target: "2",
         type: "ButtonEdge",
+        data: {
+          title: "ButtonEdge",
+          description: "An edge with a button, what do you think it does?",
+        },
       },
     ],
     nodeTypes: {

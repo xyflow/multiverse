@@ -13,7 +13,7 @@ const onEdgeClick = (evt, id) => {
   alert(`remove ${id}`);
 };
 
-export default function CustomEdge({
+export default function ButtonEdge({
   id,
   sourceX,
   sourceY,
@@ -59,3 +59,9 @@ export default function CustomEdge({
     </>
   );
 }
+
+// Prune
+export const meta = {
+  title: "ButtonEdge",
+  description: "An edge with a button, what do you think it does?",
+};
