@@ -1,9 +1,14 @@
 import ReactFlow from "@flows/ReactFlow.tsx";
 import Multiverse from "@flows/Multiverse";
 
-import Oscilloscope from "./oscilloscope/Oscilloscope.tsx";
-import ButtonEdge from "./buttonedge/ButtonEdge.tsx";
 import type { Sample } from "@utils/paths.ts";
+
+import Adsr from "./adsr/Adsr.tsx";
+import Amp from "./amp/Amp.tsx";
+import Osc from "./osc/Osc.tsx";
+import Xy from "./xy/Xy.tsx";
+
+import ButtonEdge from "./buttonedge/ButtonEdge.tsx";
 
 export const flowConfig: ReactFlowConfig = {
   flowProps: {
@@ -11,51 +16,65 @@ export const flowConfig: ReactFlowConfig = {
       {
         id: "1",
         data: {
-          label: "Node 1",
-          description:
-            "With this node you can display the amplitudes of your signal as a function of time.",
+          frequency: 220,
+          waveform: "triangle",
         },
         position: { x: 250, y: 0 },
-        type: "Oscilloscope",
+        type: "Osc",
       },
       {
         id: "2",
         data: {
-          label: "Node 1",
-          description:
-            "With this node you can display the amplitudes of your signal as a function of time.",
+          attack: 200,
+          decay: 600,
+          sustain: 0.5,
+          release: 100,
         },
-        position: { x: 400, y: 250 },
-        type: "Oscilloscope",
+        position: { x: 500, y: 175 },
+        type: "Adsr",
       },
       {
         id: "3",
         data: {
-          label: "Node 1",
-          description:
-            "With this node you can display the amplitudes of your signal as a function of time.",
+          x: 0.5,
+          y: 0.5,
         },
-        position: { x: 600, y: 250 },
-        type: "Oscilloscope",
+        position: { x: 125, y: 250 },
+        type: "Xy",
+      },
+      {
+        id: "4",
+        data: {
+          gain: 0.5,
+        },
+        position: { x: 850, y: 400 },
+        type: "Amp",
       },
     ],
     edges: [
+      { id: "1->2", source: "1", target: "2", targetHandle: "in" },
+      { id: "2->4", source: "2", target: "4", targetHandle: "in" },
       {
-        id: "e1-2",
-        source: "1",
-        target: "2",
+        id: "3->4",
+        source: "3",
+        target: "4",
         type: "ButtonEdge",
         data: {
-          title: "ButtonEdge",
-          description: "An edge with a button, what do you think it does?",
-        },
+  title: "ButtonEdge",
+  description: "An edge with a button, what do you think it does?",
+},
+        sourceHandle: "y",
+        targetHandle: "gain",
       },
     ],
     nodeTypes: {
-      Oscilloscope,
+      Adsr,
+      Amp,
+      Osc,
+      Xy,
     },
     edgeTypes: {
-      ButtonEdge,
+      ButtonEdge
     },
     fitView: true,
   },
