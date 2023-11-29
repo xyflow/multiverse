@@ -56,7 +56,7 @@ const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
 
   return (
     <g
-      className={css.pathGroup}
+      className="[pointer-events:bounding-box]"
       ref={group}
       onMouseEnter={() => {
         setHover(true);
@@ -77,9 +77,9 @@ const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
           >
             <div className={css.tooltip}>
               {/* FIXME: type not part of edge props so props.data workaround used */}
-              <span className={css.tooltipTitle}>{props.data.title}</span>
+              {props.data.title}
             </div>
-            <HoverCard.Arrow className={css.arrow} />
+            <HoverCard.Arrow className="fill-tooltip-bg [fill-opacity:0.8]" />
           </HoverCard.Content>
         </EdgeLabelRenderer>
         <EdgeLabelRenderer>

@@ -13,8 +13,6 @@ export async function getStaticPaths() {
         for (const [key, value] of Object.entries(files)) {
             const cleanedKey = key.replace('../../../../packs/', '');
             const [pack, sample] = cleanedKey.split('/');
-            console.log(key)
-            console.log(sample)
 
             routes.push({
                 params: {

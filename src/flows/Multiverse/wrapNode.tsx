@@ -2,6 +2,7 @@ import { EdgeLabelRenderer, useStore, type NodeProps } from "reactflow";
 import * as HoverCard from "@radix-ui/react-hover-card";
 
 import css from "./multiverse.module.css";
+import clsx from "clsx";
 
 type wrapNode = (
   Component: React.ComponentType<NodeProps>,
@@ -19,15 +20,13 @@ const wrapNode: wrapNode = (Component, onNodeClick) => (props) => {
           sideOffset={20}
           collisionBoundary={reactFlowDomNode}
         >
-          <div className={css.tooltip}>
-            <span className={css.tooltipTitle}>{props.type}</span>
-          </div>
-          <HoverCard.Arrow className={css.arrow} />
+          <div className={css.tooltip}>{props.type}</div>
+          <HoverCard.Arrow className={"fill-tooltip-bg [fill-opacity:0.8]"} />
         </HoverCard.Content>
       </EdgeLabelRenderer>
       <HoverCard.Trigger asChild>
         <div
-          className={css.nodeHighlightBox}
+          className={clsx(css.nodeHighlightBox, "cursor-pointer")}
           onClick={() => {
             onNodeClick(props.type, props.id);
           }}

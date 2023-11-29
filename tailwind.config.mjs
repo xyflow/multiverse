@@ -3,6 +3,11 @@ export default {
   content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
   theme: {
     extend: {
+      colors: {
+        "highlight-box": "rgb(107, 188, 248)",
+        "tooltip-bg": "rgb(211, 237, 255)",
+        tooltip: "rgb(82, 150, 203)",
+      },
       keyframes: {
         fade: {
           from: { opacity: 0 },

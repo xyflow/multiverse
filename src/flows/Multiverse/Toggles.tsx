@@ -7,10 +7,7 @@ type ToggleProps = {
 
 export default function Toggles({ inspecting, setInspecting }: ToggleProps) {
   return (
-    <div
-      style={{ right: 0, position: "absolute", padding: 25, zIndex: 5 }}
-      className={"toggles"}
-    >
+    <div className={"z-5 absolute right-0 p-10"}>
       <button
         onClick={() => {
           setInspecting(!inspecting);

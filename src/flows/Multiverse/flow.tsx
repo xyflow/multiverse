@@ -124,7 +124,6 @@ export default ({
       }
 
       const edgeBoundingBox = getPathBoundingBox(svgGroup, viewport);
-      console.log(edgeBoundingBox);
       const zoom = calculateZoom(
         edgeBoundingBox.width,
         edgeBoundingBox.height,
@@ -132,7 +131,7 @@ export default ({
         focusedFlowSize.height,
         FOCUS_PADDING,
       );
-      // const zoom = 1;
+
       viewport.setViewport(
         {
           x:

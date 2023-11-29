@@ -22,9 +22,6 @@ export function parseFilesToSamples(
     const pruneFrom = tsx.indexOf("// Prune");
     const react = pruneFrom ? tsx.substring(0, pruneFrom - 1) : tsx;
 
-    console.log(key);
-    console.log(modules[key]);
-
     samples[sample] = {
       react,
       svelte: files[key.replace("tsx", "svelte")],
