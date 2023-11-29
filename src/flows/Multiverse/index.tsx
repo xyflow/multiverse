@@ -102,7 +102,7 @@ export default function ({
 
   return (
     <>
-      <div className="relative mx-auto box-border h-full w-full max-w-[78rem]">
+      <div className="relative mx-auto box-border h-full w-full max-w-[78rem] py-8">
         <ReactFlowProvider>
           <Flow
             flowConfig={flowConfig}
@@ -136,10 +136,10 @@ export default function ({
                   skipAnimation ? "" : "animate-fade-in-delayed"
                 } grow bg-white p-5 transition-opacity`}
               >
-                <h1 className="font-xl text-small text-center">
+                <h1 className="pt-4 text-3xl font-bold">
                   {currentSample.title}
                 </h1>
-                <p>{currentSample.description}</p>
+                <p className="pt-4 text-lg">{currentSample.description}</p>
               </div>
             </div>
             <div
@@ -148,8 +148,15 @@ export default function ({
               grow bg-white transition-opacity`}
             >
               <div className="m-auto max-w-2xl p-10">
-                <p>Copy this into your project</p>
+                <p>1. install music-third-party</p>
                 <CodeViewer
+                  editorHeight={"4em"}
+                  files={{ "App.js": "pnpm install music-third-party" }}
+                  readOnly
+                />
+                <p>2. Copy this into your project</p>
+                <CodeViewer
+                  // editorHeight={"70vh"}
                   files={{ "App.js": currentSample.react }}
                   readOnly
                 />

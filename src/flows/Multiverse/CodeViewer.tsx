@@ -7,6 +7,8 @@ import {
   type SandpackFiles,
 } from "@codesandbox/sandpack-react";
 
+import { aquaBlue } from "@codesandbox/sandpack-themes";
+
 type Framework = "react" | "svelte";
 
 const defaultOptions = {
@@ -41,11 +43,11 @@ export function CodeViewer({
   customPreview = null,
   sandpackOptions = {},
   files = {},
-  //   editorHeight = "70vh",
+  editorHeight = "70vh",
   readOnly = false,
   activeFile,
 }: CodeViewerProps) {
-  //   const panelStyle = { height: editorHeight };
+  const panelStyle = { maxHeight: editorHeight };
   sandpackOptions.readOnly = !!customPreview;
   // @ todo refactor this. activeFile should be passed separately or within the sandpackOptions
   sandpackOptions.activeFile = sandpackOptions.activeFile || activeFile;
@@ -53,6 +55,7 @@ export function CodeViewer({
   return (
     <div className="my-4">
       <SandpackProvider
+        theme={aquaBlue}
         template={
           framework === "react" && isTypescript ? "react-ts" : framework
         }
@@ -61,7 +64,14 @@ export function CodeViewer({
         files={files}
       >
         <SandpackLayout>
-          {showEditor && <SandpackCodeEditor readOnly={readOnly} />}
+          {showEditor && (
+            <SandpackCodeEditor
+              readOnly={readOnly}
+              style={panelStyle}
+              showLineNumbers
+              wrapContent
+            />
+          )}
         </SandpackLayout>
       </SandpackProvider>
     </div>

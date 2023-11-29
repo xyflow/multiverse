@@ -228,10 +228,14 @@ export default ({
       {flowConfig.panelProps && <Panel {...flowConfig.panelProps} />}
       {flowConfig.minimapProps && <MiniMap {...flowConfig.minimapProps} />}
       {flowConfig.backgroundProps && (
-        <Background {...flowConfig.backgroundProps} />
+        <Background {...flowConfig.backgroundProps} className="bg-gray-50" />
       )}
 
-      <Toggles inspecting={inspecting} setInspecting={setInspecting} />
+      <Toggles
+        inspecting={inspecting}
+        setInspecting={setInspecting}
+        hideButton={!focus.node && !focus.edge}
+      />
     </ReactFlow>
   );
 };
