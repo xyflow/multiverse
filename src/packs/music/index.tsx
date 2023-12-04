@@ -8,6 +8,7 @@ import Amp from "./amp/Amp.tsx";
 import Osc from "./osc/Osc.tsx";
 import Xy from "./xy/Xy.tsx";
 
+import AudioEdge from "./audioedge/AudioEdge.tsx";
 import ButtonEdge from "./buttonedge/ButtonEdge.tsx";
 
 export const flowConfig: ReactFlowConfig = {
@@ -52,17 +53,34 @@ export const flowConfig: ReactFlowConfig = {
       },
     ],
     edges: [
-      { id: "1->2", source: "1", target: "2", targetHandle: "in" },
-      { id: "2->4", source: "2", target: "4", targetHandle: "in" },
+      {
+        id: "1->2",
+        source: "1",
+        target: "2",
+        targetHandle: "in",
+        data: {
+          title: "AudioEdge",
+          description: "An edge with a button, what do you think it does?",
+        },
+      },
+      {
+        id: "2->4",
+        source: "2",
+        target: "4",
+        targetHandle: "in",
+        data: {
+          title: "AudioEdge",
+          description: "An edge with a button, what do you think it does?",
+        },
+      },
       {
         id: "3->4",
         source: "3",
         target: "4",
-        type: "ButtonEdge",
         data: {
-  title: "ButtonEdge",
-  description: "An edge with a button, what do you think it does?",
-},
+          title: "AudioEdge",
+          description: "An edge with a button, what do you think it does?",
+        },
         sourceHandle: "y",
         targetHandle: "gain",
       },
@@ -74,7 +92,11 @@ export const flowConfig: ReactFlowConfig = {
       Xy,
     },
     edgeTypes: {
-      ButtonEdge
+      AudioEdge,
+      ButtonEdge,
+    },
+    defaultEdgeOptions: {
+      type: "AudioEdge",
     },
     fitView: true,
   },
