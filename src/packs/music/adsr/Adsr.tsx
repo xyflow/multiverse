@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   type NodeProps,
   Handle,
@@ -7,19 +7,6 @@ import {
   useStore,
 } from "reactflow";
 
-// Prune
-export const meta = {
-  title: "ADSR",
-  description: `
-    An ADSR envelope generator. Use the sliders to adjust the attack, decay,
-    sustain level, and release time. 
-  `
-};
-
-
-/**
- *
- */
 export type AdsrData = {
   attack: number;
   decay: number;
@@ -27,40 +14,63 @@ export type AdsrData = {
   release: number;
 };
 
+export const defaultData: AdsrData = {
+  attack: 100,
+  decay: 100,
+  sustain: 0.5,
+  release: 100,
+};
+
 type Param = "attack" | "decay" | "sustain" | "release";
 
-/**
- *
- */
 export function Adsr({ id, data }: NodeProps<AdsrData>) {
+  // It's important to remember to *copy* the node data when updating it. If you
+  // don't, React Flow won't know the data has changed and your node might not
+  // re-render.
+  //
+  // This `updateNodeData` callback is a helper that lets you pass in a partial
+  // object and merge it with the existing node data.
   const { setNodes } = useReactFlow();
-  const [focusedParam, setFocusedParam] = useState<Param | null>(null);
-  const hasIncomers = useStore(
-    ({ edges }) =>
-      ({
-        in: edges.some(
-          ({ target, targetHandle }) => target === id && targetHandle === "in"
-        ),
-        gate: edges.some(
-          ({ target, targetHandle }) => target === id && targetHandle === "gate"
-        ),
-      }) as const
-  );
-  const hasOutgoers = useStore(({ edges }) =>
-    edges.some(({ source }) => source === id)
-  );
-
   const updateNodeData = useCallback((data: Partial<AdsrData>) => {
     setNodes((nodes) =>
       nodes.map((node) =>
-        node.id === id ? { ...node, data: { ...node.data, ...data } } : node
-      )
+        node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
+      ),
     );
   }, []);
 
+  // We calculate whether any edges are connected to or from this node so we
+  // can highlight the corresponding handles.
+  //
+  // React Flow provides two utils that you could use instead, `getIncomers` and
+  // `getOutgoers` but we've opted to manually iterate over the edges from the
+  // store so we can exit the iteration early if we find what we're looking for.
+  const hasIncomers = useStore(({ edges }) => {
+    const incomers = { in: false, gate: false };
+
+    for (const { target, targetHandle } of edges) {
+      if (target === id && targetHandle === "in") incomers.in = true;
+      if (target === id && targetHandle === "gate") incomers.gate = true;
+      if (incomers.in && incomers.gate) break;
+    }
+
+    return incomers;
+  });
+  const hasOutgoers = useStore(({ edges }) =>
+    edges.some(({ source }) => source === id),
+  );
+
+  // Keeping track of the current hovered/focused slider lets us highlight the
+  // corresponding line segment in the graph.
+  const [focusedParam, setFocusedParam] = useState<Param | null>(null);
+
+  // Memoizing the path segments saves us re-calculating the segments just because
+  // a handle is connected or an input is focused.
+  const segments = useMemo(() => toPathSegments(data), [data]);
+
   return (
     <div className="bg-white shadow-lg [&>*]:px-2 [&>*]:py-1">
-      <header className="bg-gray-100 rounded-t-lg text-xs">
+      <header className="rounded-t-lg bg-gray-100 text-xs">
         <div
           className={`relative -mx-1.5 px-2 ${
             hasIncomers.gate ? "opacity-100" : "opacity-25"
@@ -79,9 +89,9 @@ export function Adsr({ id, data }: NodeProps<AdsrData>) {
         </div>
       </header>
 
-      <div className="m-2 rounded bg-gray-50 shadow-inner text-pink-500">
+      <div className="m-2 rounded bg-gray-50 text-pink-500 shadow-inner">
         <svg className="w-full" viewBox="-5 -5 410 110" width="220">
-          {toPathSegments(data).map(({ param, from, to }) => (
+          {segments.map(({ param, from, to }) => (
             <path
               key={param}
               className={
@@ -102,7 +112,7 @@ export function Adsr({ id, data }: NodeProps<AdsrData>) {
         onMouseEnter={() => setFocusedParam("attack")}
         onMouseLeave={() => setFocusedParam(null)}
       >
-        <p className="text-xs text-right">attack</p>
+        <p className="text-right text-xs">attack</p>
         <input
           className="nodrag nopan col-span-2"
           type="range"
@@ -121,7 +131,7 @@ export function Adsr({ id, data }: NodeProps<AdsrData>) {
         onMouseEnter={() => setFocusedParam("decay")}
         onMouseLeave={() => setFocusedParam(null)}
       >
-        <p className="text-xs text-right">decay</p>
+        <p className="text-right text-xs">decay</p>
         <input
           className="nodrag nopan col-span-2"
           type="range"
@@ -140,7 +150,7 @@ export function Adsr({ id, data }: NodeProps<AdsrData>) {
         onMouseEnter={() => setFocusedParam("sustain")}
         onMouseLeave={() => setFocusedParam(null)}
       >
-        <p className="text-xs text-right">sustain</p>
+        <p className="text-right text-xs">sustain</p>
         <input
           className="nodrag nopan col-span-2"
           type="range"
@@ -155,28 +165,20 @@ export function Adsr({ id, data }: NodeProps<AdsrData>) {
         <span className="text-xs">{data.sustain}</span>
       </label>
 
-      <label
-        className="flex gap-2 rounded ring-inset ring-pink-500 focus-within:ring-2"
-        onMouseEnter={() => setFocusedParam("release")}
-        onMouseLeave={() => setFocusedParam(null)}
-      >
-        <p className="text-xs text-right">release</p>
-        <input
-          className="nodrag nopan col-span-2"
-          type="range"
-          min={0}
-          max={1000}
-          value={data.release}
-          onChange={(e) => updateNodeData({ release: Number(e.target.value) })}
-          onFocus={() => setFocusedParam("release")}
-          onBlur={() => setFocusedParam(null)}
-        />
-        <span className="text-xs">{data.release}ms</span>
-      </label>
+      <Slider
+        label="release"
+        value={data.release}
+        unit="ms"
+        min={0}
+        max={1000}
+        onChange={(value) => updateNodeData({ release: value })}
+        onFocus={() => setFocusedParam("release")}
+        onBlur={() => setFocusedParam(null)}
+      />
 
-      <footer className="bg-gray-100 rounded-b-lg text-xs">
+      <footer className="rounded-b-lg bg-gray-100 text-xs">
         <div
-          className={`relative text-right -mx-2 px-2 ${
+          className={`relative -mx-2 px-2 text-right ${
             hasOutgoers ? "opacity-100" : "opacity-25"
           }`}
         >
@@ -190,9 +192,9 @@ export function Adsr({ id, data }: NodeProps<AdsrData>) {
 
 export default Adsr;
 
-//
 const toPathSegments = ({ attack, decay, sustain, release }: AdsrData) => {
   const sustainY = 100 - sustain * 100;
+  const params = ["attack", "decay", "sustain", "release"];
   const segments = [
     { x: 0, y: 100 },
     { x: attack / 10, y: 0 },
@@ -201,10 +203,65 @@ const toPathSegments = ({ attack, decay, sustain, release }: AdsrData) => {
     { x: attack / 10 + decay / 10 + 100 + release / 10, y: 100 },
   ];
 
-  return [
-    { param: "attack", from: segments[0], to: segments[1] },
-    { param: "decay", from: segments[1], to: segments[2] },
-    { param: "sustain", from: segments[2], to: segments[3] },
-    { param: "release", from: segments[3], to: segments[4] },
-  ] as const;
+  return params.map((param, i) => ({
+    param,
+    from: segments[i],
+    to: segments[i + 1],
+  }));
 };
+
+type SliderProps = {
+  label: string;
+  value: number;
+  unit?: string;
+  onChange: (value: number) => void;
+  onFocus: () => void;
+  onBlur: () => void;
+};
+
+function Slider({
+  label,
+  value,
+  unit,
+  onChange,
+  onFocus,
+  onBlur,
+  ...delegated
+}: SliderProps & Omit<JSX.IntrinsicElements["input"], keyof SliderProps>) {
+  return (
+    <label
+      className="flex gap-2 rounded ring-inset ring-pink-500 focus-within:ring-2"
+      onMouseEnter={onFocus}
+      onMouseLeave={onBlur}
+    >
+      <p className="text-right text-xs">{label}</p>
+      <input
+        // It's important to add the `nodrag` and `nopan` classes to interactive
+        // elements inside a custom node so React Flow knows not to start moving
+        // the node around or panning the canvas when you interact with them.
+        className="nodrag nopan col-span-2"
+        type="range"
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        onFocus={() => onFocus}
+        onBlur={() => onBlur}
+        {...delegated}
+      />
+      <span className="text-xs">
+        {value}
+        {unit}
+      </span>
+    </label>
+  );
+}
+
+// PRUNE -----------------------------------------------------------------------
+
+export const meta = (Adsr.meta = {
+  title: "ADSR",
+  route: "adsr",
+  description: [
+    "An ADSR envelope generator. Use the sliders to adjust the attack, decay,\
+     sustain level, and release time.",
+  ],
+});
