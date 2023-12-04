@@ -19,8 +19,12 @@ export function parseFilesToSamples(
     const cleanedKey = key.replace("../../../../packs/", "");
     const sample = cleanedKey.split("/")[1];
 
-    const pruneFrom = tsx.indexOf("// Prune");
-    const react = pruneFrom ? tsx.substring(0, pruneFrom - 1) : tsx;
+    const react = tsx.replaceAll(
+      // Remove any code inside the PRUNE START and PRUNE END comments. Also remove
+      // *everything* after the PRUNE comment.
+      /(^ *\/\/ PRUNE START(.|\n)+? *\/\/ PRUNE END.+$)|(^ *\/\/ PRUNE(.|\n)*)/gm,
+      "",
+    );
 
     samples[sample] = {
       react,
