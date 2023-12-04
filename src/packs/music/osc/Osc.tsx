@@ -15,7 +15,7 @@ export const meta = {
     An oscillator generates a tone at the specified frequency. The waveform can
     be changed to produce different sounds. The frequency slider is disabled if
     another node is connected to the frequency handle.
-  `
+  `,
 };
 
 export type OscData = {
@@ -29,30 +29,30 @@ export function Osc({ id, data }: NodeProps<OscData>) {
   const { setNodes } = useReactFlow();
   const highPrecision = useKeyPress("Shift");
   const hasIncomers = useStore(({ edges }) =>
-    edges.some(({ target }) => target === id)
+    edges.some(({ target }) => target === id),
   );
   const hasOutgoers = useStore(({ edges }) =>
-    edges.some(({ source }) => source === id)
+    edges.some(({ source }) => source === id),
   );
 
   const updateNodeData = useCallback((data: Partial<OscData>) => {
     setNodes((nodes) =>
       nodes.map((node) =>
-        node.id === id ? { ...node, data: { ...node.data, ...data } } : node
-      )
+        node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
+      ),
     );
   }, []);
 
   return (
     <div className="bg-white shadow-lg [&>*]:px-2 [&>*]:py-1">
-      <header className="bg-gray-100 rounded-t-lg text-xs">
+      <header className="rounded-t-lg bg-gray-100 text-xs">
         <div
           className={`relative -mx-1.5 px-2 ${
             hasIncomers ? "opacity-100" : "opacity-25"
           }`}
         >
           <span>freq</span>
-          <Handle position={Position.Left} type="target"/>
+          <Handle position={Position.Left} type="target" />
         </div>
       </header>
 
@@ -61,7 +61,7 @@ export function Osc({ id, data }: NodeProps<OscData>) {
         rounded ring-inset ring-pink-500 focus-within:ring-2
         `}
       >
-        <p className="font-bold mb-1">frequency</p>
+        <p className="mb-1 font-bold">frequency</p>
         <input
           className="nodrag nopan"
           type="range"
@@ -98,9 +98,9 @@ export function Osc({ id, data }: NodeProps<OscData>) {
         onChange={(waveform) => updateNodeData({ waveform })}
       />
 
-      <footer className="bg-gray-100 rounded-b-lg text-xs">
+      <footer className="rounded-b-lg bg-gray-100 text-xs">
         <div
-          className={`relative text-right -mx-2 px-2 ${
+          className={`relative -mx-2 px-2 text-right ${
             hasOutgoers ? "opacity-100" : "opacity-25"
           }`}
         >
@@ -125,7 +125,7 @@ function WaveformSelect({ value, onChange }: WaveformSelectProps) {
   return (
     <div className="rounded ring-inset ring-pink-500 focus-within:ring-2">
       <fieldset className="flex flex-col" name="waveform">
-        <legend className="font-bold mb-1">waveform</legend>
+        <legend className="mb-1 font-bold">waveform</legend>
         {options.map((option) => (
           <WaveformRadio
             key={option}
