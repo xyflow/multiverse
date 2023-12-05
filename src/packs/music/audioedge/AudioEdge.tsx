@@ -150,20 +150,6 @@ export function AudioEdge({
 
 export default AudioEdge;
 
-// PRUNE -----------------------------------------------------------------------
-
-export const meta = (AudioEdge.meta = {
-  title: "<AudioEdge />",
-  route: "audio-edge",
-  description: [
-    "This is where we should write lots of words about the audio edge. Explain\
-     what it does and how it works etc. We would probably want to support \
-     `markdown` here",
-    "And also multiple paragraphs so we can write a nice-looking guide or \
-     something.",
-  ],
-});
-
 // This hook creates a dummy oscillator node so that we have an audio source to
 // connect to our analyser node.
 const useAudioDemo = () => {
@@ -200,3 +186,16 @@ const useAudioDemo = () => {
 
   return { ctx, out };
 };
+// PRUNE START -----------------------------------------------------------------------
+export const meta = (AudioEdge.meta = {
+  title: "AudioEdge",
+  route: "audio-edge",
+  description: [
+    "This is where we should write lots of words about the audio edge. Explain\
+     what it does and how it works etc. We would probably want to support \
+     `markdown` here",
+    "And also multiple paragraphs so we can write a nice-looking guide or \
+     something.",
+  ],
+});
+// PRUNE END -----------------------------------------------------------------------

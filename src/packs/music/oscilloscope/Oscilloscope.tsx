@@ -10,9 +10,10 @@ export default function Oscilloscope() {
   );
 }
 
-// Prune
+// PRUNE START
 export const meta = {
   title: "Oscilloscope",
   description:
     "A simple oscilloscope that plots the amplitude of an audio signal as a function of time.",
 };
+// PRUNE END

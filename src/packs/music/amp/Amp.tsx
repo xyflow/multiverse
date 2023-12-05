@@ -8,16 +8,6 @@ import {
   getIncomers,
 } from "reactflow";
 
-// Prune
-export const meta = {
-  title: "Amp",
-  description: `
-    A simple gain control. The gain slider is disabled if another node is connected
-    to the gain handle.
-  `
-};
-
-
 /**
  *
  */
@@ -35,28 +25,29 @@ export function Amp({ id, data }: NodeProps<AmpData>) {
     ({ edges }) =>
       ({
         gain: edges.some(
-          ({ target, targetHandle }) => target === id && targetHandle === "gain"
+          ({ target, targetHandle }) =>
+            target === id && targetHandle === "gain",
         ),
         in: edges.some(
-          ({ target, targetHandle }) => target === id && targetHandle === "in"
+          ({ target, targetHandle }) => target === id && targetHandle === "in",
         ),
-      }) as const
+      }) as const,
   );
   const hasOutgoers = useStore(({ edges }) =>
-    edges.some(({ source }) => source === id)
+    edges.some(({ source }) => source === id),
   );
 
   const updateNodeData = useCallback((data: Partial<AmpData>) => {
     setNodes((nodes) =>
       nodes.map((node) =>
-        node.id === id ? { ...node, data: { ...node.data, ...data } } : node
-      )
+        node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
+      ),
     );
   }, []);
 
   return (
     <div className="bg-white shadow-lg [&>*]:px-2 [&>*]:py-1">
-      <header className="bg-gray-100 rounded-t-lg text-xs">
+      <header className="rounded-t-lg bg-gray-100 text-xs">
         <div
           className={`relative -mx-1.5 px-2 ${
             hasIncomers.gain ? "opacity-100" : "opacity-25"
@@ -80,7 +71,7 @@ export function Amp({ id, data }: NodeProps<AmpData>) {
         rounded ring-inset ring-pink-500 focus-within:ring-2
         `}
       >
-        <p className="font-bold mb-1">gain</p>
+        <p className="mb-1 font-bold">gain</p>
         <input
           className="nodrag nopan"
           type="range"
@@ -94,9 +85,9 @@ export function Amp({ id, data }: NodeProps<AmpData>) {
         <p className="text-right text-xs">{data.gain}</p>
       </label>
 
-      <footer className="bg-gray-100 rounded-b-lg text-xs">
+      <footer className="rounded-b-lg bg-gray-100 text-xs">
         <div
-          className={`relative text-right -mx-2 px-2 ${
+          className={`relative -mx-2 px-2 text-right ${
             hasOutgoers ? "opacity-100" : "opacity-25"
           }`}
         >
@@ -109,3 +100,12 @@ export function Amp({ id, data }: NodeProps<AmpData>) {
 }
 
 export default Amp;
+// PRUNE START
+export const meta = {
+  title: "Amp",
+  description: `
+    A simple gain control. The gain slider is disabled if another node is connected
+    to the gain handle.
+  `,
+};
+// PRUNE END

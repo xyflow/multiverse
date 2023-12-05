@@ -137,7 +137,8 @@ export default function ({
                 } grow bg-white p-5 transition-opacity`}
               >
                 <h1 className="pt-4 text-3xl font-bold">
-                  {currentSample.title}
+                  {"<"}
+                  {currentSample.title} {"/>"}
                 </h1>
                 <p className="pt-4 text-lg">{currentSample.description}</p>
               </div>

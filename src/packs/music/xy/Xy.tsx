@@ -7,42 +7,28 @@ import {
   useStore,
 } from "reactflow";
 
-// Prune
-export const meta = {
-  title: "Oscilloscope",
-  description:
-    "A simple oscilloscope that plots the amplitude of an audio signal as a function of time.",
-};
-
-
-/**
- *
- */
 export type XyData = {
   x: number;
   y: number;
 };
 
-/**
- *
- */
 export function Xy({ id, data }: NodeProps<XyData>) {
   const { setNodes } = useReactFlow();
   const [dragging, setDragging] = useState(false);
   const hasOutgoers = useStore(({ edges }) => ({
     x: edges.some(
-      ({ source, sourceHandle }) => source === id && sourceHandle === "x"
+      ({ source, sourceHandle }) => source === id && sourceHandle === "x",
     ),
     y: edges.some(
-      ({ source, sourceHandle }) => source === id && sourceHandle === "y"
+      ({ source, sourceHandle }) => source === id && sourceHandle === "y",
     ),
   }));
 
   const updateNodeData = useCallback((data: Partial<XyData>) => {
     setNodes((nodes) =>
       nodes.map((node) =>
-        node.id === id ? { ...node, data: { ...node.data, ...data } } : node
-      )
+        node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
+      ),
     );
   }, []);
 
@@ -50,7 +36,7 @@ export function Xy({ id, data }: NodeProps<XyData>) {
     <div className="bg-white shadow-lg [&>*]:px-2 [&>*]:py-1">
       <div>
         <svg
-          className={`w-[200px] h-[200px] nodrag nopan rounded bg-gray-50 transition hover:bg-gray-100 text-gray-400 shadow-inner
+          className={`nodrag nopan h-[200px] w-[200px] rounded bg-gray-50 text-gray-400 shadow-inner transition hover:bg-gray-100
         ${dragging ? "hover:text-pink-500" : "hover:text-gray-500"}
         `}
           viewBox="0 0 200 200"
@@ -89,9 +75,9 @@ export function Xy({ id, data }: NodeProps<XyData>) {
         </svg>
       </div>
 
-      <footer className="bg-gray-100 rounded-b-lg text-xs">
+      <footer className="rounded-b-lg bg-gray-100 text-xs">
         <div
-          className={`relative text-right -mx-2 px-2 ${
+          className={`relative -mx-2 px-2 text-right ${
             hasOutgoers.x ? "opacity-100" : "opacity-25"
           }`}
         >
@@ -99,7 +85,7 @@ export function Xy({ id, data }: NodeProps<XyData>) {
           <Handle position={Position.Right} type="source" id="x" />
         </div>
         <div
-          className={`relative text-right -mx-2 px-2 ${
+          className={`relative -mx-2 px-2 text-right ${
             hasOutgoers.y ? "opacity-100" : "opacity-25"
           }`}
         >
@@ -112,3 +98,9 @@ export function Xy({ id, data }: NodeProps<XyData>) {
 }
 
 export default Xy;
+// PRUNE START
+export const meta = {
+  title: "XY",
+  description: "An XY type thingy",
+};
+// PRUNE END

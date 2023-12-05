@@ -58,9 +58,9 @@ export const flowConfig: ReactFlowConfig = {
         source: "1",
         target: "2",
         targetHandle: "in",
+        type: "AudioEdge",
         data: {
           title: "AudioEdge",
-          description: "An edge with a button, what do you think it does?",
         },
       },
       {
@@ -68,18 +68,18 @@ export const flowConfig: ReactFlowConfig = {
         source: "2",
         target: "4",
         targetHandle: "in",
+        type: "AudioEdge",
         data: {
           title: "AudioEdge",
-          description: "An edge with a button, what do you think it does?",
         },
       },
       {
         id: "3->4",
         source: "3",
         target: "4",
+        type: "AudioEdge",
         data: {
           title: "AudioEdge",
-          description: "An edge with a button, what do you think it does?",
         },
         sourceHandle: "y",
         targetHandle: "gain",

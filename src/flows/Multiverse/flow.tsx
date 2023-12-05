@@ -115,6 +115,7 @@ export default ({
     }
 
     if (focus.edge) {
+      console.log(focus.edge);
       const svgGroup = document.querySelector<SVGElement>(
         `[data-testid="rf__edge-${focus.edge}"]`,
       );
@@ -207,6 +208,8 @@ export default ({
         !inspecting ? flowConfig.flowProps?.edgeTypes : wrappedEdgeTypes
       }
       nodeOrigin={[0.5, 0.5]}
+      minZoom={0.0000001}
+      maxZoom={Number.MAX_VALUE}
       style={{
         opacity:
           flowInitState !== FlowInitState.ViewportFocused && skipAnimation

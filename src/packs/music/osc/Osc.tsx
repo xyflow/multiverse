@@ -8,16 +8,6 @@ import {
   useKeyPress,
 } from "reactflow";
 
-// Prune
-export const meta = {
-  title: "Oscillator",
-  description: `
-    An oscillator generates a tone at the specified frequency. The waveform can
-    be changed to produce different sounds. The frequency slider is disabled if
-    another node is connected to the frequency handle.
-  `,
-};
-
 export type OscData = {
   frequency: number;
   waveform: Waveform;
@@ -211,3 +201,13 @@ const waves = {
     13.203 21.277 L 26.348 16 Z m 0 0
   `,
 };
+// PRUNE START
+export const meta = {
+  title: "Oscillator",
+  description: `
+    An oscillator generates a tone at the specified frequency. The waveform can
+    be changed to produce different sounds. The frequency slider is disabled if
+    another node is connected to the frequency handle.
+  `,
+};
+// PRUNE END
