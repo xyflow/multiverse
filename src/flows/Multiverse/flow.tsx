@@ -197,18 +197,8 @@ export default ({
       {...flowConfig.flowProps}
       nodes={nodes}
       edges={edges}
-      onNodesChange={
-        inspecting && flowInitState === FlowInitState.ViewportFocused
-          ? () => {}
-          : onNodesChange
-        /*FIXME is this the way to make it non-interactive? */
-      }
-      onEdgesChange={
-        inspecting && flowInitState === FlowInitState.ViewportFocused
-          ? () => {}
-          : onEdgesChange
-        /*FIXME is this the way to make it non-interactive? */
-      }
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       nodeTypes={
         !inspecting ? flowConfig.flowProps?.nodeTypes : wrappedNodeTypes
