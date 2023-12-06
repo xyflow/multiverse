@@ -115,7 +115,7 @@ export default function ({
             focus={focus}
             focusedFlowSize={{
               /* TODO: This should not be hardcoded but responsive */
-              width: 624,
+              width: 600,
               height: 480,
             }}
             skipAnimation={skipAnimation}
@@ -137,7 +137,8 @@ export default function ({
                 } grow bg-white p-5 transition-opacity`}
               >
                 <h1 className="pt-4 text-3xl font-bold">
-                  {currentSample.title}
+                  {"<"}
+                  {currentSample.title} {"/>"}
                 </h1>
                 <p className="pt-4 text-lg">{currentSample.description}</p>
               </div>

@@ -11,7 +11,6 @@ type wrapNode = (
 
 const wrapNode: wrapNode = (Component, onNodeClick) => (props) => {
   const reactFlowDomNode = useStore((state) => state.domNode);
-  // FIXME: Not really sure about the double div wrapper to prevent user interaction 💩
   return (
     <HoverCard.Root openDelay={0} closeDelay={0}>
       <EdgeLabelRenderer>
@@ -27,11 +26,18 @@ const wrapNode: wrapNode = (Component, onNodeClick) => (props) => {
       <HoverCard.Trigger asChild>
         <div
           className={clsx(css.nodeHighlightBox, "cursor-pointer")}
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             onNodeClick(props.type, props.id);
           }}
+          onPointerDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
         >
-          <div style={{ pointerEvents: "all" }}>
+          {/* FIXME Not really sure about the double div wrapper to prevent user interaction 💩 */}
+          <div style={{ pointerEvents: "none" }}>
             <Component {...props} />
           </div>
         </div>

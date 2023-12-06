@@ -65,7 +65,9 @@ const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
         setHover(false);
       }}
     >
-      <Component {...props} />
+      <g className="pointer-events-none">
+        <Component {...props} />
+      </g>
       <HoverCard.Root open={hover}>
         <EdgeLabelRenderer>
           <HoverCard.Content
@@ -85,7 +87,8 @@ const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
         <EdgeLabelRenderer>
           <HoverCard.Trigger asChild>
             <div
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 onEdgeClick(props.data.title, props.id);
               }}
               onMouseLeave={() => {
