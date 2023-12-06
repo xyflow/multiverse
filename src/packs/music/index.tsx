@@ -20,7 +20,7 @@ export const flowConfig: ReactFlowConfig = {
           frequency: 220,
           waveform: "triangle",
         },
-        position: { x: 250, y: 0 },
+        position: { x: 0, y: 0 },
         type: "Osc",
       },
       {

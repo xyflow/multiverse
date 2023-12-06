@@ -115,7 +115,7 @@ export default function ({
             focus={focus}
             focusedFlowSize={{
               /* TODO: This should not be hardcoded but responsive */
-              width: 624,
+              width: 600,
               height: 480,
             }}
             skipAnimation={skipAnimation}

@@ -33,8 +33,8 @@ function calculateZoom(
   containerHeight: number,
   padding: number,
 ) {
-  const widthZoom = containerWidth / (width + padding);
-  const heightZoom = containerHeight / (height + padding);
+  const widthZoom = containerWidth / (width + padding * 2);
+  const heightZoom = containerHeight / (height + padding * 2);
   return Math.min(widthZoom, heightZoom);
 }
 
@@ -106,7 +106,7 @@ export default ({
         {
           x: -node.position.x * zoom + focusedFlowSize.width * 0.5,
           y: -node.position.y * zoom + focusedFlowSize.height * 0.5,
-          zoom: zoom,
+          zoom,
         },
         { duration: skipAnimation ? 0 : 350 },
       );
@@ -115,7 +115,6 @@ export default ({
     }
 
     if (focus.edge) {
-      console.log(focus.edge);
       const svgGroup = document.querySelector<SVGElement>(
         `[data-testid="rf__edge-${focus.edge}"]`,
       );
@@ -124,10 +123,11 @@ export default ({
         return;
       }
 
-      const edgeBoundingBox = getPathBoundingBox(svgGroup, viewport);
+      const edgeBB = getPathBoundingBox(svgGroup, viewport);
+
       const zoom = calculateZoom(
-        edgeBoundingBox.width,
-        edgeBoundingBox.height,
+        edgeBB.width,
+        edgeBB.height,
         focusedFlowSize.width,
         focusedFlowSize.height,
         FOCUS_PADDING,
@@ -136,13 +136,13 @@ export default ({
       viewport.setViewport(
         {
           x:
-            -edgeBoundingBox.width -
-            edgeBoundingBox.x * zoom +
-            focusedFlowSize.width * 0.5,
+            -edgeBB.x * zoom +
+            focusedFlowSize.width * 0.5 -
+            edgeBB.width * 0.5 * zoom,
           y:
-            -edgeBoundingBox.height -
-            edgeBoundingBox.y * zoom +
-            focusedFlowSize.height * 0.5,
+            -edgeBB.y * zoom +
+            focusedFlowSize.height * 0.5 -
+            edgeBB.height * 0.5 * zoom,
           zoom: zoom,
         },
         { duration: skipAnimation ? 0 : 350 },
