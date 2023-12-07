@@ -1,4 +1,4 @@
-// import type { GetStaticPaths } from "astro";
+import type { GetStaticPaths } from "astro";
 
 export type Sample = {
   react: string;
@@ -30,14 +30,14 @@ export function parseFilesToSamples(
       react,
       svelte: files[key.replace("tsx", "svelte")],
       title: modules[key].meta?.title,
-      description: modules[key].meta?.description,
+      description: modules[key].meta.description,
     };
   }
   return samples;
 }
 
 export function parseFilesToRoutes(files: Record<string, string>) {
-  const routes: ReturnType<any> = [];
+  const routes: ReturnType<GetStaticPaths> = [];
 
   for (const [key, value] of Object.entries(files)) {
     const cleanedKey = key.replace("../../../packs/", "");

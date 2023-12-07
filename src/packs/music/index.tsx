@@ -8,6 +8,7 @@ import Xy from "./xy/Xy.tsx";
 
 import AudioEdge from "./audioedge/AudioEdge.tsx";
 import { parseFilesToSamples } from "../../utils/paths.ts";
+import type { GetStaticPaths } from "astro";
 
 export const flowConfig: ReactFlowConfig = {
   flowProps: {
@@ -105,37 +106,3 @@ export const DevFlow = () => <ReactDevFlow flowConfig={flowConfig} />;
 
 // This exports the pack viewer for production
 export default createPackViewer(flowConfig);
-
-const files = import.meta.glob(
-  // And here ------- 👇
-  ["../../../../packs/music/**/**/*", "!**/index.tsx", "!**/*.css"],
-  { eager: true, as: "raw" },
-);
-
-const modules = import.meta.glob(
-  // And here ------- 👇
-  ["../../../../packs/music/**/**/*.tsx", "!**/index.tsx"],
-  { eager: true, import: "default", query: "?inline" },
-);
-
-const samples = parseFilesToSamples(files, modules);
-export const routes: ReturnType<any> = [];
-Object.keys(samples).forEach((sample) => {
-  routes.push({
-    params: {
-      sample,
-    },
-    props: {
-      samples,
-    },
-  });
-});
-
-routes.push({
-  params: {
-    sample: undefined,
-  },
-  props: {
-    samples,
-  },
-});
