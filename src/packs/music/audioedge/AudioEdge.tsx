@@ -187,7 +187,7 @@ const useAudioDemo = () => {
   return { ctx, out };
 };
 // PRUNE START -----------------------------------------------------------------------
-export const meta = (AudioEdge.meta = {
+AudioEdge.meta = {
   title: "AudioEdge",
   route: "audio-edge",
   description: [
@@ -197,5 +197,5 @@ export const meta = (AudioEdge.meta = {
     "And also multiple paragraphs so we can write a nice-looking guide or \
      something.",
   ],
-});
+};
 // PRUNE END -----------------------------------------------------------------------

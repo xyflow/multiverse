@@ -101,7 +101,7 @@ export function Amp({ id, data }: NodeProps<AmpData>) {
 
 export default Amp;
 // PRUNE START
-export const meta = {
+Amp.meta = {
   title: "Amp",
   description: `
     A simple gain control. The gain slider is disabled if another node is connected

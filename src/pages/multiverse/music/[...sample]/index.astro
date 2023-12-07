@@ -1,10 +1,10 @@
 ---
-import MultiverseLayout from "@layouts/multiverse.astro";
+import WebsiteMock from "@layouts/WebsiteMock.astro";
 
 import { parseFilesToSamples, type Sample } from "@utils/paths";
 
 // Adjust the import here ------------- 👇
-import { MultiverseFlow } from "@packs/music";
+import PackFlow from "@packs/music";
 import type { GetStaticPaths } from "astro";
 
 export async function getStaticPaths() {
@@ -17,7 +17,7 @@ export async function getStaticPaths() {
   const modules = import.meta.glob(
     // And here ------- 👇
     ["../../../../packs/music/**/**/*.tsx", "!**/index.tsx"],
-    { eager: true, import: "meta", query: "?inline" },
+    { eager: true, import: "default", query: "?inline" },
   );
   const samples = parseFilesToSamples(files, modules);
   const routes: ReturnType<GetStaticPaths> = [];
@@ -45,10 +45,10 @@ export async function getStaticPaths() {
 }
 ---
 
-<MultiverseLayout>
-  <MultiverseFlow
+<WebsiteMock>
+  <PackFlow
     samples={Astro.props.samples as Record<string, Sample>}
     initialLocation={(Astro.params.sample as string) ?? "home"}
     client:load
   />
-</MultiverseLayout>
+</WebsiteMock>

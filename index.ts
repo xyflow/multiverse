@@ -1,1 +1,1 @@
-export const test = "TEST";
+export * as Musicpack from "@packs/music";

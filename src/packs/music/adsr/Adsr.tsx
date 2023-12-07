@@ -257,11 +257,11 @@ function Slider({
 
 // PRUNE -----------------------------------------------------------------------
 
-export const meta = (Adsr.meta = {
+Adsr.meta = {
   title: "ADSR",
   route: "adsr",
   description: [
     "An ADSR envelope generator. Use the sliders to adjust the attack, decay,\
      sustain level, and release time.",
   ],
-});
+};

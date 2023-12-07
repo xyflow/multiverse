@@ -5,7 +5,26 @@ import { ReactFlowProvider } from "reactflow";
 
 import { CodeViewer } from "./CodeViewer";
 
-export default function ({
+export function createPackViewer(flowConfig: ReactFlowConfig) {
+  return ({
+    samples,
+    initialLocation,
+  }: {
+    samples: Record<string, Sample>;
+    initialLocation: string;
+  }) => {
+    return (
+      <PackViewer
+        samples={samples}
+        flowConfig={flowConfig}
+        initialLocation={initialLocation}
+        pack="music"
+      />
+    );
+  };
+}
+
+function PackViewer({
   samples,
   initialLocation,
   flowConfig,
@@ -169,3 +188,5 @@ export default function ({
     </>
   );
 }
+
+export default PackViewer;

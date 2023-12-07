@@ -1,7 +1,5 @@
-import ReactFlow from "@flows/ReactFlow.tsx";
-import Multiverse from "@flows/Multiverse";
-
-import type { Sample } from "@utils/paths.ts";
+import ReactDevFlow from "@flows/ReactDevFlow";
+import { createPackViewer } from "@flows/PackViewer";
 
 import Adsr from "./adsr/Adsr.tsx";
 import Amp from "./amp/Amp.tsx";
@@ -9,7 +7,8 @@ import Osc from "./osc/Osc.tsx";
 import Xy from "./xy/Xy.tsx";
 
 import AudioEdge from "./audioedge/AudioEdge.tsx";
-import ButtonEdge from "./buttonedge/ButtonEdge.tsx";
+import { parseFilesToSamples } from "@utils/paths.ts";
+import type { GetStaticPaths } from "astro";
 
 export const flowConfig: ReactFlowConfig = {
   flowProps: {
@@ -93,7 +92,6 @@ export const flowConfig: ReactFlowConfig = {
     },
     edgeTypes: {
       AudioEdge,
-      ButtonEdge,
     },
     defaultEdgeOptions: {
       type: "AudioEdge",
@@ -103,24 +101,42 @@ export const flowConfig: ReactFlowConfig = {
   backgroundProps: {},
 };
 
-// This boilerplate is sadly necessary
-export default () => <ReactFlow flowConfig={flowConfig} />;
+// This exports a minimal flow for development
+export const DevFlow = () => <ReactDevFlow flowConfig={flowConfig} />;
 
-// This boilerplate is not necessary but Astro is weird
-// (no functions allowed in props...)
-export function MultiverseFlow({
-  samples,
-  initialLocation,
-}: {
-  samples: Record<string, Sample>;
-  initialLocation: string;
-}) {
-  return (
-    <Multiverse
-      samples={samples}
-      flowConfig={flowConfig}
-      initialLocation={initialLocation}
-      pack="music"
-    />
-  );
-}
+// This exports the pack viewer for production
+export default createPackViewer(flowConfig);
+
+const files = import.meta.glob(
+  // And here ------- 👇
+  ["../../../../packs/music/**/**/*", "!**/index.tsx", "!**/*.css"],
+  { eager: true, as: "raw" },
+);
+
+const modules = import.meta.glob(
+  // And here ------- 👇
+  ["../../../../packs/music/**/**/*.tsx", "!**/index.tsx"],
+  { eager: true, import: "default", query: "?inline" },
+);
+
+const samples = parseFilesToSamples(files, modules);
+export const routes: ReturnType<GetStaticPaths> = [];
+Object.keys(samples).forEach((sample) => {
+  routes.push({
+    params: {
+      sample,
+    },
+    props: {
+      samples,
+    },
+  });
+});
+
+routes.push({
+  params: {
+    sample: undefined,
+  },
+  props: {
+    samples,
+  },
+});

@@ -99,7 +99,7 @@ export function Xy({ id, data }: NodeProps<XyData>) {
 
 export default Xy;
 // PRUNE START
-export const meta = {
+Xy.meta = {
   title: "XY",
   description: "An XY type thingy",
 };

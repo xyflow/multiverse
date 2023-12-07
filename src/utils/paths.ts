@@ -29,8 +29,8 @@ export function parseFilesToSamples(
     samples[sample] = {
       react,
       svelte: files[key.replace("tsx", "svelte")],
-      title: modules[key].title,
-      description: modules[key].description,
+      title: modules[key].meta?.title,
+      description: modules[key].meta?.description,
     };
   }
   return samples;

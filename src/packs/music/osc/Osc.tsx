@@ -202,7 +202,7 @@ const waves = {
   `,
 };
 // PRUNE START
-export const meta = {
+Osc.meta = {
   title: "Oscillator",
   description: `
     An oscillator generates a tone at the specified frequency. The waveform can
