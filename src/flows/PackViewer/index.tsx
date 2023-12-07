@@ -1,4 +1,4 @@
-import type { Sample } from "@utils/paths";
+import type { Sample } from "../../utils/paths";
 import Flow from "./flow";
 import { useEffect, useState } from "react";
 import { ReactFlowProvider } from "reactflow";

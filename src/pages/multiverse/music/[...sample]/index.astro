@@ -1,10 +1,10 @@
 ---
-import WebsiteMock from "@layouts/WebsiteMock.astro";
+import WebsiteMock from "../../../../layouts/WebsiteMock.astro";
 
-import { parseFilesToSamples, type Sample } from "@utils/paths";
+import { parseFilesToSamples, type Sample } from "../../../../utils/paths";
 
 // Adjust the import here ------------- 👇
-import PackFlow from "@packs/music";
+import PackFlow from "../../../../packs/music";
 import type { GetStaticPaths } from "astro";
 
 export async function getStaticPaths() {

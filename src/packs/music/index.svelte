@@ -1,5 +1,5 @@
 <script lang="ts">
-  import SvelteFlow from "@flows/SvelteDevFlow.svelte";
+  import SvelteFlow from "../../flows/SvelteDevFlow.svelte";
 
   export const flowConfig: SvelteFlowConfig = {
     flowProps: {
