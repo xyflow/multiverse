@@ -1,1 +1,1 @@
-export * as Musicpack from "@packs/music";
+export * as Musicpack from "src/packs/music";
