@@ -8,7 +8,6 @@ import Xy from "./xy/Xy.tsx";
 
 import AudioEdge from "./audioedge/AudioEdge.tsx";
 import { parseFilesToSamples } from "../../utils/paths.ts";
-import type { GetStaticPaths } from "astro";
 
 export const flowConfig: ReactFlowConfig = {
   flowProps: {
@@ -120,7 +119,7 @@ const modules = import.meta.glob(
 );
 
 const samples = parseFilesToSamples(files, modules);
-export const routes: ReturnType<GetStaticPaths> = [];
+export const routes: ReturnType<any> = [];
 Object.keys(samples).forEach((sample) => {
   routes.push({
     params: {

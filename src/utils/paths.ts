@@ -1,4 +1,4 @@
-import type { GetStaticPaths } from "astro";
+// import type { GetStaticPaths } from "astro";
 
 export type Sample = {
   react: string;
@@ -37,7 +37,7 @@ export function parseFilesToSamples(
 }
 
 export function parseFilesToRoutes(files: Record<string, string>) {
-  const routes: ReturnType<GetStaticPaths> = [];
+  const routes: ReturnType<any> = [];
 
   for (const [key, value] of Object.entries(files)) {
     const cleanedKey = key.replace("../../../packs/", "");
