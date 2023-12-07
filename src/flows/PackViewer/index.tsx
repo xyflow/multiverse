@@ -104,6 +104,7 @@ function PackViewer({
 
   function onElementClick(type: string, id: string, kind: string) {
     const _currentSample = samples[type.toLowerCase()];
+    console.log(_currentSample, samples, type.toLowerCase());
     if (_currentSample) {
       // TODO: This routing is just temporary (switch to next router later)
       history.pushState(

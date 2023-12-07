@@ -1,14 +1,12 @@
 import ReactDevFlow from "../../flows/ReactDevFlow";
 import { createPackViewer } from "../../flows/PackViewer";
 
-import Adsr from "./adsr/Adsr.tsx";
-import Amp from "./amp/Amp.tsx";
-import Osc from "./osc/Osc.tsx";
-import Xy from "./xy/Xy.tsx";
+import Adsr from "./adsr/Adsr";
+import Amp from "./amp/Amp";
+import Osc from "./osc/Osc";
+import Xy from "./xy/Xy";
 
 import AudioEdge from "./audioedge/AudioEdge.tsx";
-import { parseFilesToSamples } from "../../utils/paths.ts";
-import type { GetStaticPaths } from "astro";
 
 export const flowConfig: ReactFlowConfig = {
   flowProps: {
@@ -99,6 +97,11 @@ export const flowConfig: ReactFlowConfig = {
     fitView: true,
   },
   backgroundProps: {},
+};
+
+export const samples = {
+  ...flowConfig.flowProps?.nodeTypes,
+  ...flowConfig.flowProps?.edgeTypes,
 };
 
 // This exports a minimal flow for development
