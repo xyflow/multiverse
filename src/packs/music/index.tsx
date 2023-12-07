@@ -1,5 +1,5 @@
-import ReactDevFlow from "@flows/ReactDevFlow";
-import { createPackViewer } from "@flows/PackViewer";
+import ReactDevFlow from "../../flows/ReactDevFlow";
+import { createPackViewer } from "../../flows/PackViewer";
 
 import Adsr from "./adsr/Adsr.tsx";
 import Amp from "./amp/Amp.tsx";
@@ -7,7 +7,7 @@ import Osc from "./osc/Osc.tsx";
 import Xy from "./xy/Xy.tsx";
 
 import AudioEdge from "./audioedge/AudioEdge.tsx";
-import { parseFilesToSamples } from "@utils/paths.ts";
+import { parseFilesToSamples } from "../../utils/paths.ts";
 import type { GetStaticPaths } from "astro";
 
 export const flowConfig: ReactFlowConfig = {
