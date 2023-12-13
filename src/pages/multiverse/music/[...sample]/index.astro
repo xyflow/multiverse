@@ -1,10 +1,11 @@
 ---
-import WebsiteMock from "../../../../layouts/WebsiteMock.astro";
+import WebsiteMock from "@layouts/WebsiteMock.astro";
+import CodeOverlay from "@components/CodeOverlay.astro";
 
-import { parseFilesToSamples, type Sample } from "../../../../utils/paths";
+import { parseFilesToSamples } from "@utils/paths";
 
 // Adjust the import here ------------- 👇
-import PackFlow from "../../../../packs/music";
+import PackFlow from "@packs/music";
 import type { GetStaticPaths } from "astro";
 
 export async function getStaticPaths() {
@@ -27,7 +28,7 @@ export async function getStaticPaths() {
         sample,
       },
       props: {
-        samples,
+        ...samples[sample],
       },
     });
   });
@@ -45,10 +46,21 @@ export async function getStaticPaths() {
 }
 ---
 
-<WebsiteMock>
+<WebsiteMock transition:persist transition:name="layout">
   <PackFlow
-    samples={Astro.props.samples as Record<string, Sample>}
     initialLocation={(Astro.params.sample as string) ?? "home"}
     client:load
+    transition:persist
+    transition:name="flow"
   />
+  {
+    Astro.params.sample && (
+      <CodeOverlay
+        code={Astro.props.react}
+        title={Astro.props.title}
+        description={Astro.props.description}
+        transition:name="code"
+      />
+    )
+  }
 </WebsiteMock>

@@ -1,0 +1,54 @@
+---
+import { Code } from 'astro:components';
+const { code, title, description } = Astro.props;
+
+const anim = {
+  old: {
+    name: 'test1',
+    duration: '1s',
+    easing: 'linear',
+    // fillMode: 'forwards',
+  },
+  new: {
+    name: 'test1',
+    duration: '1s',
+    direction: 'reverse',
+    easing: 'linear',
+    // fillMode: 'forwards',
+  },
+};
+
+const myFade = {
+  forwards: anim,
+  backwards: anim,
+};
+---
+
+<style>
+@keyframes test1 {
+    from {
+      transform: translateY(0%);
+    }
+    to {
+      transform: translateY(100%);
+    }
+  }
+</style>
+
+<div class="absolute top-0 box-border flex h-full w-full" transition:animate={myFade}>
+<div class="flex h-full w-[39rem] flex-col">
+    <div class="h-[30rem]" />
+    <div class={` grow bg-white p-5`}>
+    <h1 class="pt-4 text-3xl font-bold">
+        {"<"} {title} {"/>"}
+    </h1>
+    <p class="pt-4 text-lg">{description}</p>
+    </div>
+</div>
+<div class={`w-100 grow bg-white transition-opacity overflow-scroll`}>
+    <div class="m-auto max-w-2xl p-10">
+    <p>1. install music-third-party</p>
+    <Code code={code} lang="js" theme="vitesse-light" />
+    </div>
+</div>
+</div>

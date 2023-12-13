@@ -86,6 +86,7 @@ const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
         </EdgeLabelRenderer>
         <EdgeLabelRenderer>
           <HoverCard.Trigger asChild>
+            {/* <a href={`music/${props.data.title.toLowerCase()}`}> */}
             <div
               onClick={(e) => {
                 e.stopPropagation();
@@ -106,6 +107,7 @@ const wrapEdge: wrapEdge = (Component, onEdgeClick) => (props) => {
                   ${pathBB.y - PADDING}px)`,
               }}
             />
+            {/* </a> */}
           </HoverCard.Trigger>
         </EdgeLabelRenderer>
       </HoverCard.Root>

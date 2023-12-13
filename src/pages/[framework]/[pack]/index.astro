@@ -1,8 +1,8 @@
 ---
-import { parseFilesToRoutes } from "../../../utils/paths";
+import { parseFilesToRoutes } from "@utils/paths";
 
-import { DevFlow as MusicPackReact } from "../../../packs/music/index";
-import MusicPackSvelte from "../../../packs/music/index.svelte";
+import { DevFlow as MusicPackReact } from "@packs/music/index";
+import MusicPackSvelte from "@packs/music/index.svelte";
 
 export async function getStaticPaths() {
   const files = import.meta.glob("../../../packs/*/*", {
